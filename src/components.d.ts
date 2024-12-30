@@ -10,6 +10,7 @@ declare module 'vue' {
     AppFooter: typeof import('./components/pages/AppFooter.vue')['default']
     HelloWorld: typeof import('./components/Main.vue')['default']
     Main: typeof import('./components/Main.vue')['default']
+    RickAndMorty: typeof import('./components/organisms/RickAndMorty/RickAndMorty.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
