@@ -1,5 +1,5 @@
 <template>
-    <main @mousemove="handleMouseMove">
+    <main>
   <div class="d-flex align-center justify-content-center align-items-center">
     <img id="anchor" src="/morty-icon/morty.png">
     <div id="eyes">
@@ -15,50 +15,45 @@
   </template>
   
   <script lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { onMounted } from 'vue';
   
   export default {
     name: 'Main',
     setup() {
-      const mouseX = ref(0);
-      const mouseY = ref(0);
+        const angle = (cx: number, cy: number, ex: number, ey: number): number => {
+            const dy = ey - cy;
+            const dx = ex - cx;
+            const rad = Math.atan2(dx, dy);
+            const deg = (rad * 180) / Math.PI;
+            return deg;
+        };
+
+        onMounted(() => {
+            const eyeElements = document.querySelectorAll('.eye');
+            const anchor = document.getElementById('anchor');
+            const anchorRect = anchor?.getBoundingClientRect();
+            let anchorX = 0;
+            let anchorY = 0;
+            if (anchorRect) {
+                anchorX = (anchorRect.left + anchorRect.width / 2) | 0;
+                anchorY = (anchorRect.top + anchorRect.height / 2) | 0;
+            }
+
+            document.addEventListener('mousemove', (e: MouseEvent) => {
+                const angleDeg = angle(e.clientX, e.clientY, anchorX, anchorY);
+                const eyeElements = document.querySelectorAll('.eye');
+                eyeElements.forEach((eye) => {
+                (eye as HTMLElement).style.transform = `rotate(${90-angleDeg}deg)`;
+                }); 
+                
+                (anchor as HTMLElement).style.filter = `hue-rotate(${90-angleDeg}deg)`; 
+            });
+            
+        });
   
-      const anchor = document.getElementById('anchor');
-      const anchorRect = anchor?.getBoundingClientRect();
-      let anchorX = 0;
-      let anchorY = 0;
-      if (anchorRect) {
-        anchorX = (anchorRect.left + anchorRect.width / 2) | 0;
-        anchorY = (anchorRect.top + anchorRect.height / 2) | 0;
-      }
+        return {
       
-  
-      const handleMouseMove = (e: MouseEvent) => {
-        mouseX.value = e.clientX;
-        mouseY.value = e.clientY;
-        const angleDeg = angle(mouseX.value, mouseY.value, anchorX, anchorY);
-        const eyeElements = document.querySelectorAll('.eye');
-        eyeElements.forEach((eye) => {
-          (eye as HTMLElement).style.transform = `rotate(${90-angleDeg}deg)`;
-        }); 
-  
-        const anchor = document.getElementById('anchor');
-        (anchor as HTMLElement).style.filter = `hue-rotate(${90-angleDeg}deg)`; 
-      };
-  
-      const angle = (cx: number, cy: number, ex: number, ey: number): number => {
-        const dy = ey - cy;
-        const dx = ex - cx;
-        const rad = Math.atan2(dx, dy);
-        const deg = (rad * 180) / Math.PI;
-        return deg;
-      };
-  
-      return {
-        mouseX,
-        mouseY,
-        handleMouseMove
-      };
+        };
     },
   };
   </script>
