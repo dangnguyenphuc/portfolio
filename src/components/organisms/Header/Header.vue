@@ -17,7 +17,7 @@
                 </v-row>
             </v-col>
             <v-col class="d-flex align-center justify-end mr-2">
-                <v-btn @click="toggleTheme" class="square-btn">
+                <v-btn @click="toggleTheme" class="square-btn" icon>
                     <v-icon>{{ icon }}</v-icon>
                 </v-btn>
             </v-col>
@@ -27,7 +27,7 @@
                     <v-col class="d-flex align-center justify-center mr-6">
                         <v-menu offset-y>
                             <template v-slot:activator="{ props }">
-                            <v-btn class="square-btn border-btn" icon v-bind="props">
+                            <v-btn class="square-btn" icon v-bind="props">
                                 <v-icon>mdi-menu</v-icon>
                             </v-btn>
                             </template>
