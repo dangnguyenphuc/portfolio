@@ -11,7 +11,7 @@ declare module 'vue' {
     Header: typeof import('./components/organisms/Header/Header.vue')['default']
     HelloWorld: typeof import('./components/Main.vue')['default']
     Main: typeof import('./components/Main.vue')['default']
-    RickAndMorty: typeof import('./components/organisms/RickAndMorty/RickAndMorty.vue')['default']
+    RickAndMorty: typeof import('./components/RickAndMorty/RickAndMorty.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

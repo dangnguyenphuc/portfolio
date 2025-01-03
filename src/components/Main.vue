@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import RickAndMorty from './organisms/RickAndMorty/RickAndMorty.vue';
+import RickAndMorty from './RickAndMorty/RickAndMorty.vue';
 
 
 </script>
