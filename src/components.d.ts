@@ -7,8 +7,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AppFooter: typeof import('./components/organisms/Footer/AppFooter.vue')['default']
-    Header: typeof import('./components/organisms/Header/Header.vue')['default']
+    AppFooter: typeof import('./components/Footer/AppFooter.vue')['default']
+    Header: typeof import('./components/Header/Header.vue')['default']
     HelloWorld: typeof import('./components/Main.vue')['default']
     Main: typeof import('./components/Main.vue')['default']
     RickAndMorty: typeof import('./components/RickAndMorty/RickAndMorty.vue')['default']
