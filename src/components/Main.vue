@@ -43,17 +43,13 @@
           </v-col>
          
         </v-row>
-   
 
     </v-container>
-    
-
   </main>
 </template>
 
 <script lang="ts">
 import RickAndMorty from './RickAndMorty/RickAndMorty.vue';
-
 
 </script>
 
