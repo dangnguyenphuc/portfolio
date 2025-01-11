@@ -1,6 +1,6 @@
 <template>
     <main>
-        <canvas id="myCanvas" width="1024" height="576" style="border: 1px solid #000;"></canvas>
+        <canvas id="myCanvas" width="1024" height="576"></canvas>
     </main>
 </template>
 
@@ -16,26 +16,54 @@ export default {
         let y = -1000;
 
         const firstX = -3100;
-        const firstY = -1000;
+        const firstY = -950;
         
         const img = new Image();
         img.src = 'rpg-assets/Images/main-map.png';
+
+        const playerImg = new Image();
+        playerImg.src = '/rpg-assets/Images/playerDown.png';
+
+        let firstLoad = true;
+
         img.onload = () => {
-            const animate = () => {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, x, y);
+            // const animate = () => {
+            //     if (firstLoad)
+            //     {
+            //         ctx.clearRect(0, 0, canvas.width, canvas.height);
+            //         ctx.drawImage(img, x, y);
 
-                if (x > firstX)
-                {
-                    x -= Math.min(20, x - firstX);
-                }
+            //         if (x > firstX)
+            //         {
+            //             x -= Math.min(20, x - firstX);
+            //             requestAnimationFrame(animate);
+            //         } 
+            //         else
+            //         {
+            //             firstLoad = false;
+            //         }
+            //     }
+            //     else
+            //     {
+            //         ctx.drawImage(img, x, y);
+            //         ctx.drawImage(playerImg, 0, 0);
+            //     }
+                 
+            // };
+            // animate();
+            ctx.drawImage(img, firstX, firstY);
+            ctx.drawImage(playerImg, 
+            0,
+            0,
+            playerImg.width/4,
+            playerImg.height,
+            canvas.width/2 - playerImg.width/2, 
+            canvas.height/2 - playerImg.height/2,
+            playerImg.width/4,
+            playerImg.height
+        );
 
-                if (x > firstX)
-                {
-                    requestAnimationFrame(animate);
-                } 
-            };
-            animate();
+
         }
     },
   };
