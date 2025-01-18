@@ -44,6 +44,28 @@ class Coordinate2D {
   }
 }
 
+class Boundary {
+    static width = 60;
+    static height = 60;
+    position: Coordinate2D;
+    width: number;
+    height: number;
+    
+    constructor(position: Coordinate2D, width: number, height: number)
+    {
+        this.position = position;
+        this.width = width;
+        this.height = height;
+    }
+
+    draw(ctx: CanvasRenderingContext2D)
+    {
+        ctx.fillStyle = 'red';
+        ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+    }
+
+}
+
 class Sprite {
     position: Coordinate2D;
     image: HTMLImageElement;
@@ -64,6 +86,23 @@ export default {
 
     mounted() {
         const collision = map.layers.find(element => element.name=='Collision')?.data
+        const boundaries: Boundary[] = []
+
+        collision?.forEach((element, i) => {
+            if (element == 1025)
+            {
+                boundaries.push(new Boundary(
+                    new Coordinate2D(
+                        Math.floor(i/70)*Boundary.width,
+                        i%70*Boundary.height
+                    ),
+                    Boundary.width,
+                    Boundary.height
+                ))
+            }
+        });
+
+        console.log(boundaries);
         const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
         const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
         ctx.fillRect(0, 0, canvas.width, canvas.height)
