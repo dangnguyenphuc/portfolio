@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <main>
     <v-container>
         <v-card class="d-flex bg-red justify-center pa-2 my-4">
@@ -46,7 +46,7 @@
 
     </v-container>
   </main>
-</template>
+</template> -->
 
 <script lang="ts">
 import RickAndMorty from './RickAndMorty/RickAndMorty.vue';

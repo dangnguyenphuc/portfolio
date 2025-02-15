@@ -10,6 +10,7 @@ import 'vuetify/styles'
 
 // Composables
 import { createVuetify } from 'vuetify'
+import { yellow } from 'vuetify/util/colors'
 
 const light = {
   dark: false,
@@ -20,14 +21,15 @@ const light = {
     'surface-light': '#EEEEEE',
     'surface-variant': '#424242',
     'on-surface-variant': '#EEEEEE',
-    primary: '#1867C0',
-    'primary-darken-1': '#1F5592',
+    primary: '#FFFFFF',
+    'primary-darken-1': '#000000',
     secondary: '#48A9A6',
     'secondary-darken-1': '#018786',
     error: '#B00020',
     info: '#2196F3',
     success: '#4CAF50',
     warning: '#FB8C00',
+    yellow: '#fecb07'
   },
   variables: {
     'border-color': '#000000',
@@ -46,22 +48,25 @@ const light = {
     'theme-on-kbd': '#FFFFFF',
     'theme-code': '#F5F5F5',
     'theme-on-code': '#000000',
+    'primary-dark': '#000000',
+    'primary-light': '#FFFFFF',
   }
 }
 
 const dark = {             // Default dark theme
   dark: true,
   colors: {
-    background: '#121212',
+    background: '#000000',
     surface: '#1E1E1E',
-    primary: '#BB86FC',
-    'primary-darken-1': '#3700B3',
+    primary: '#000000',
+    'primary-darken-1': '#FFFFFF',
     secondary: '#03DAC6',
     'secondary-darken-1': '#018786',
     error: '#CF6679',
     info: '#2196F3',
     success: '#4CAF50',
     warning: '#FB8C00',
+    yellow: '#fecb07'
   }
 }
 
