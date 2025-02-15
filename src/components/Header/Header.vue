@@ -1,14 +1,6 @@
 <template>
     <v-app-bar>
         <v-row no-gutter class="d-flex flex-row align-center justify-space-between">
-            <v-col class="navbar-icon d-flex flex-row justify-center align-center ga-2">
-                    <v-img class="icon"
-                    src="/header-icon/Main-Logo.svg"
-                    alt=""
-                    ></v-img>
-                    <h3 class="navbar-icon-title">DANG.NGUYEN</h3>
-            </v-col>
-
             <v-col class="d-none d-md-flex">
                 <v-row>
                     <v-btn v-for="(item, i) in menuItems" :key="i" text>
@@ -77,26 +69,6 @@
   
   <style scoped>
   /* Add any additional styles if needed */
-  .icon {
-    max-height: 70px;
-    max-width: 100px;
-  }
-
-  .navbar-icon {
-    max-width: 350px;
-  }
-
-  .navbar-icon-title {
-    color: rgb(0, 0, 0);
-    background-color: #d9bbe3;
-    text-shadow: 2px 2px 2px rgb(255, 255, 255);
-    box-shadow: 2px 2px 2px #bb73d2;
-    transition: box-shadow 0.3s ease;
-  }
-
-  .navbar-icon-title:hover {
-    box-shadow: 4px 4px 2px #bb73d2;
-  }
 
   .square-btn {
         width: 50px; /* Set the width to ensure it's square */

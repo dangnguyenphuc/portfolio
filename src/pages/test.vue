@@ -55,10 +55,11 @@ class Boundary {
         this.height = height;
     }
 
-    draw(ctx: CanvasRenderingContext2D)
+    draw(ctx: CanvasRenderingContext2D, offset: Coordinate2D)
     {
         ctx.fillStyle = 'red';
-        ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+        ctx.fillRect(this.position.x + offset.x, this.position.y + offset.y, this.width, this.height);
+        console.log("Draw at", this.position.x + offset.x, this.position.y + offset.y)
     }
 
 }
@@ -82,15 +83,21 @@ class Sprite {
 class Map {
     mapSprite: Sprite;
     offset: Coordinate2D;
+    boundaries: Boundary[];
 
-    constructor(position: Coordinate2D, image: HTMLImageElement, offset: Coordinate2D = new Coordinate2D(0,0)) {
+    constructor(position: Coordinate2D, image: HTMLImageElement, boundaries: Boundary[], offset: Coordinate2D = new Coordinate2D(0,0)) {
         this.mapSprite = new Sprite(position, image);
         this.offset = offset;
+        this.boundaries = boundaries;
+        console.log(this.boundaries);
     }
 
     draw(ctx: CanvasRenderingContext2D)
     {
         this.mapSprite.draw(ctx, this.offset);
+        this.boundaries.forEach(boundary => {
+            boundary.draw(ctx, this.offset);
+        });
     }
 
     updateOffset(offset: Coordinate2D = new Coordinate2D(0,0))
@@ -209,10 +216,23 @@ class Player {
 export default {
 
     mounted() {
-        const collision = map.layers.find(element => element.name=='Collision')?.data
         const boundaries: Boundary[] = []
+        const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
+        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-        collision?.forEach((element, i) => {
+        const collision = map.layers.find(element => element.name=='Collision');
+        if (!collision)
+        {
+            ctx.fillText('ERROR 101', 0, 0); 
+            return;
+        }
+        else if (!collision.data)
+        {
+            ctx.fillText('ERROR 102', 0, 0); 
+            return;
+        }
+
+        collision.data.forEach((element, i) => {
             if (element == 1025)
             {
                 boundaries.push(new Boundary(
@@ -225,18 +245,16 @@ export default {
                 ))
             }
         });
-        const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
         ctx.fillRect(0, 0, canvas.width, canvas.height)
 
         const img = new Image();
         img.src = 'rpg-assets/Images/main-map.png';
 
-        
         const playerImg = new Image();
         playerImg.src = '/rpg-assets/Images/playerDown.png';
         
-        let mainMap = new Map(new Coordinate2D(-3100, -950), img);
+        let mainMap = new Map(new Coordinate2D(-3100, -950), img, boundaries);
         let player = new Player(new Coordinate2D(canvas.width/2 - playerImg.width/2, canvas.height/2 - playerImg.height/2), playerImg);
 
         function animate()
