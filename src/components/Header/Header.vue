@@ -1,41 +1,50 @@
 <template>
-    
-    <v-row class="header-bar d-flex pa-0 my-0 align-center justify-md-start justify-end" style="outline: 1px solid red;">
-
-      <v-col class="d-none d-md-flex pa-0">
-        <div class="d-flex flex-column ml-10">
-          <v-row>
-            <div class="border-sm border-opacity-100 bg-primary text-caption menu-text pa-1">MENU</div>
-          </v-row>
-          <v-row class="ga-10 ml-2">
-              <div v-for="(item) in menuItems" :key="item.id" class="elevation-0 pa-0 text-subtitle-1" @click="test">
-                  <div :class="'slide-bg ' + backgroundValue">
-                    {{ item.title }}
-                  </div>
-              </div>
-          </v-row>
-        </div>
-      </v-col>
-      
-      <div class="square-btn d-flex flex-column ">
-        <v-btn @click="toggleTheme" class="theme-btn bg-yellow d-flex align-center justify-center pa-0">
-              <v-icon class="mr-3 mb-2">{{ iconValue }}</v-icon>
-        </v-btn>
-        <v-btn @click="toggleTheme" class="menu-btn bg-yellow d-md-none d-flex align-center justify-center pa-0">
-              <v-icon class="mr-3 mt-3 menu-btn-content">mdi-menu</v-icon>
-        </v-btn>
+  <v-row class="header-bar d-flex pa-0 my-0 align-center justify-md-start justify-end mt-5" style="outline: 1px solid red;">
+    <v-col class="d-none d-md-flex">
+      <div class="d-flex flex-column ml-10 ga-2">
+        <v-row>
+          <div class="border-sm border-opacity-100 bg-primary text-caption menu-text">MENU</div>
+        </v-row>
+        <v-row class="ga-5 ml-2">
+            <div v-for="(item) in menuItems" :key="item.id" class="elevation-0 text-button" @click="changeWindow(item)">
+                <div :class="'slide-bg ' + backgroundValue + (item.id===currentWindow ? ' bg-primary-darken-1 text-highlight' : '')">
+                  {{ item.title }}
+                </div>
+            </div>
+        </v-row>
       </div>
-    </v-row>
+    </v-col>
+  </v-row>
+  <div class="square-btn d-flex flex-column position-fixed top-0 right-0">
+    <v-btn @click="toggleTheme" class="theme-btn bg-red d-flex align-center justify-center pa-0">
+          <v-icon class="mr-1 mb-2">{{ iconValue }}</v-icon>
+    </v-btn>
+    <v-btn @click="toggleMenu" class="menu-btn bg-red d-md-none d-flex align-center justify-center pa-0">
+          <v-icon class="mr-1 mt-3 menu-btn-content">mdi-menu</v-icon>
+    </v-btn>
+  </div>
+    
   </template>
   
-<script>
-  import { ref } from 'vue';
+<script lang="ts">
   import { useTheme } from 'vuetify';
+  import { useRouter } from 'vue-router'
+
+  interface Window {
+    id: number, 
+    title: string,
+    path: string
+  }
+  export interface DataType{
+    currentWindow: Number,
+    menuItems: Array<Window>
+  }
 
   export default {
     setup() {
       const theme = useTheme();
-      return { theme }; // Return to use in computed and methods
+      const router = useRouter()
+      return { theme, router };
     },
 
     computed: {
@@ -55,26 +64,34 @@
         menuItems: [
           {
             id: 0,
-            title: 'BLOGS',
-            components: null
+            title: 'TOP',
+            path: '/'
           }, 
           {
             id: 1,
             title: 'PROJECTS',
-            components: null
+            path: '/project'
           }, 
           {
             id: 2,
             title: 'CONTACT',
-            components: null
+            path: '/test'
           }
         ],
+        currentWindow: 0,
       };
     },
 
     methods: {
-      test() {
+      changeWindow(window: Window)
+      {
+        this.currentWindow = window.id;
+        this.router.push({path: window.path});
+      },   
 
+      toggleMenu ()
+      {
+        this.$emit('display-menu');
       },
 
       toggleTheme() {
@@ -88,6 +105,7 @@
   /* Add any additional styles if needed */
   .menu-text {
     font-weight: bold;
+    padding: 0px 2px;
   }
 
   .header-bar {
@@ -110,10 +128,9 @@
 
   .square-btn {
     width: 6%;
-    /* min-height:; */
-    border-radius: 0px;
+    color: #fff;
     cursor: pointer;
-    
+    z-index: 999;
   }
 
   @media (max-width: 1080px) {
@@ -151,7 +168,7 @@
     left: 0;
     height: 100%;
     width: 0;
-    transition: width 0.5s ease;
+    transition: width 0.3s ease;
     z-index: -1;
   }
 
@@ -178,5 +195,4 @@
   .menu-btn-content {
     transform: rotate(-6deg);
   }
-
 </style>

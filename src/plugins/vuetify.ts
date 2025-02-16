@@ -10,7 +10,7 @@ import 'vuetify/styles'
 
 // Composables
 import { createVuetify } from 'vuetify'
-import { yellow } from 'vuetify/util/colors'
+import { red, yellow } from 'vuetify/util/colors'
 
 const light = {
   dark: false,
@@ -29,7 +29,9 @@ const light = {
     info: '#2196F3',
     success: '#4CAF50',
     warning: '#FB8C00',
-    yellow: '#fecb07'
+    yellow: '#fecb07',
+    highlight: '#fecb07',
+    red: '#b40011'
   },
   variables: {
     'border-color': '#000000',
@@ -50,6 +52,7 @@ const light = {
     'theme-on-code': '#000000',
     'primary-dark': '#000000',
     'primary-light': '#FFFFFF',
+    'yellow': '#fecb07',
   }
 }
 
@@ -66,7 +69,9 @@ const dark = {             // Default dark theme
     info: '#2196F3',
     success: '#4CAF50',
     warning: '#FB8C00',
-    yellow: '#fecb07'
+    yellow: '#fecb07',
+    red: '#b40011',
+    highlight: '#46825A',
   }
 }
 
