@@ -1,5 +1,5 @@
 <template>
-    <v-row class="header-bar position-fixed  d-flex pa-0 my-0 align-center justify-md-start justify-end mt-5" style="outline: 1px solid red;">
+    <v-row class="header-bar position-fixed  d-flex pa-0 my-0 align-center justify-md-start justify-end mt-5">
       <v-col class="d-none d-md-flex">
         <div class="d-flex flex-column ml-10 ga-2">
           <v-row>
@@ -16,10 +16,14 @@
       </v-col>
     </v-row>
     <div class="square-btn d-flex flex-column position-fixed top-0 right-0">
-      <v-btn @click="toggleTheme" class="theme-btn bg-red d-flex align-center justify-center pa-0">
+      <v-btn @click="toggleTheme"
+      :class="{ 'shift-down text-yellow': isShifted }"  
+      class="theme-btn bg-red d-flex align-center justify-center pa-0">
             <v-icon class="mr-1 mb-2">{{ iconValue }}</v-icon>
       </v-btn>
-      <v-btn @click="toggleMenu" class="menu-btn bg-red d-md-none d-flex align-center justify-center pa-0">
+      <v-btn @click="toggleMenu"
+      :class="{ 'shift-up text-yellow': isShifted }" 
+      class="menu-btn bg-red d-md-none d-flex align-center justify-center pa-0">
             <v-icon class="mr-1 mt-3 menu-btn-content">mdi-menu</v-icon>
       </v-btn>
     </div>
@@ -64,6 +68,7 @@
   
       data() {
         return {
+          isShifted: false,
           currentWindow: 0,
           prevWindow: 0,
         };
@@ -79,6 +84,7 @@
   
         toggleMenu ()
         {
+          this.isShifted = !this.isShifted;
           if (this.currentWindow != this.menuItems.length)
           {
             this.currentWindow = this.menuItems.length;
@@ -122,6 +128,16 @@
       border-radius: 0px;
       font-size: 1.5rem;
       min-height: 60px;
+    }
+
+    .shift-up {
+      transform: translateY(-10px);
+      transition: transform 0.2s ease;
+    }
+
+    .shift-down {
+      transform: translateY(10px);
+      transition: transform 0.2s ease;
     }
   
     .square-btn {

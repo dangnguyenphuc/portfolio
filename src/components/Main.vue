@@ -53,7 +53,10 @@
   
   <v-window v-model="currentWindow">
     <v-window-item v-for="item in menuItems" key="item.id" :value="item.id">
-      {{ item.id }}
+      <v-img
+        class="sub-logo"
+        src="/logo/sub-logo-1.svg"
+      ></v-img>
     </v-window-item>
     
     <v-window-item :value="menuItems.length">
@@ -116,4 +119,8 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.sub-logo {
+  max-width: 90vw;
+  width: 70vw;
+}
 </style>
