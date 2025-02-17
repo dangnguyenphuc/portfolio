@@ -48,8 +48,70 @@
   </main>
 </template> -->
 
+<template>
+  <Header @changeWindow="updateWindow" :menuItems="menuItems"/>
+  
+  <v-window v-model="currentWindow">
+    <v-window-item v-for="item in menuItems" key="item.id" :value="item.id">
+      {{ item.id }}
+    </v-window-item>
+    
+    <v-window-item :value="menuItems.length">
+      <HeaderMenu/>
+    </v-window-item>
+  </v-window>
+</template>
+
+
+
+
 <script lang="ts">
+import { defineComponent } from 'vue'
 import RickAndMorty from './RickAndMorty/RickAndMorty.vue';
+import Header from './Header/Header.vue';
+import HeaderMenu from './Header/HeaderMenu.vue';
+
+export interface Window {
+  id: number, 
+  title: string,
+  component: any
+}
+
+export interface DataType{
+  currentWindow: Number,
+  menuItems: Array<Window>
+}
+
+export default defineComponent({
+  name: 'Main',
+  data(){
+    return {
+      currentWindow: 0,
+      menuItems: [
+        {
+          id: 0,
+          title: 'TOP',
+          component: null
+        }, 
+        {
+          id: 1,
+          title: 'PROJECTS',
+          component: null
+        }, 
+        {
+          id: 2,
+          title: 'CONTACT',
+          component: null
+        }
+      ],
+    }
+  },
+  methods: {
+    updateWindow(viewId: number) {
+      this.currentWindow = viewId;
+    }
+  }
+})
 
 </script>
 

@@ -1,30 +1,7 @@
 <template>
-    <v-row class="header-bar position-fixed  d-flex pa-0 my-0 align-center justify-md-start justify-end mt-5" style="outline: 1px solid red;">
-      <v-col class="d-none d-md-flex">
-        <div class="d-flex flex-column ml-10 ga-2">
-          <v-row>
-            <div class="border-sm border-opacity-100 bg-primary text-caption menu-text">MENU</div>
-          </v-row>
-          <v-row class="ga-5 ml-2">
-              <div v-for="(item) in menuItems" :key="item.id" class="elevation-0 text-button" @click="changeWindow(item)">
-                  <div :class="'slide-bg ' + backgroundValue + (item.id===currentWindow ? ' bg-primary-darken-1 text-highlight' : '')">
-                    {{ item.title }}
-                  </div>
-              </div>
-          </v-row>
-        </div>
-      </v-col>
-    </v-row>
-    <div class="square-btn d-flex flex-column position-fixed top-0 right-0">
-      <v-btn @click="toggleTheme" class="theme-btn bg-red d-flex align-center justify-center pa-0">
-            <v-icon class="mr-1 mb-2">{{ iconValue }}</v-icon>
-      </v-btn>
-      <v-btn @click="toggleMenu" class="menu-btn bg-red d-md-none d-flex align-center justify-center pa-0">
-            <v-icon class="mr-1 mt-3 menu-btn-content">mdi-menu</v-icon>
-      </v-btn>
-    </div>
+    <div class="main-menu bg-yellow">no</div>
       
-    </template>
+</template>
     
   <script lang="ts">
     import { defineComponent } from 'vue'
@@ -36,18 +13,18 @@
     }
   
     export default defineComponent({
-      name: 'Header',
+      name: 'HeaderMenu',
       setup() {
         const theme = useTheme();
         return { theme };
       },
 
       props:{
-        menuItems: {
-            type: Array<Window>,
-            default: [],
-            required: true
-        }
+        // menuItems: {
+        //     type: Array<Window>,
+        //     default: [],
+        //     required: true
+        // }
       },
   
       computed: {
@@ -64,42 +41,37 @@
   
       data() {
         return {
-          currentWindow: 0,
-          prevWindow: 0,
+        //   currentWindow: 0,
         };
       },
   
       methods: {
-        changeWindow(window: Window)
-        {
-          this.$emit('changeWindow', window.id);
-          this.currentWindow = window.id;
-          this.prevWindow = window.id;
-        },   
+        // changeWindow(window: Window)
+        // {
+        //   this.$emit('changeWindow', window.id);
+        //   this.currentWindow = window.id;
+        // },   
   
-        toggleMenu ()
-        {
-          if (this.currentWindow != this.menuItems.length)
-          {
-            this.currentWindow = this.menuItems.length;
-            this.$emit('changeWindow', this.menuItems.length);
-          }
-          else
-          {
-            this.currentWindow = this.prevWindow;
-            this.$emit('changeWindow',this.currentWindow);
-          }
-        },
+        // toggleMenu ()
+        // {
+        //   this.$emit('changeWindow', this.menuItems.length);
+        // },
   
-        toggleTheme() {
-          this.theme.global.name.value = this.theme.global.name.value === 'light' ? 'dark' : 'light';
-        }
+        // toggleTheme() {
+        //   this.theme.global.name.value = this.theme.global.name.value === 'light' ? 'dark' : 'light';
+        // }
       }
     });
   </script>
     
   <style scoped>
     /* Add any additional styles if needed */
+    .main-menu {
+        background-image: url(/backgrounds/bg-main.png);
+        height: 100vh;
+        width: 100vw;
+    }
+
     .menu-text {
       font-weight: bold;
       padding: 0px 2px;
@@ -107,7 +79,6 @@
   
     .header-bar {
       min-height: 50px;
-      z-index: 998;
     }
   
     .theme-btn {
