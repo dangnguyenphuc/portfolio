@@ -49,7 +49,7 @@
 </template> -->
 
 <template>
-  <Header @changeWindow="updateWindow" :menuItems="menuItems"/>
+  <Header @changeWindow="updateWindow" :menuItems="menuItems" :displayNavbar="showNav" :currentWindow="currentWindow"/>
   
   <v-window v-model="currentWindow">
     <v-window-item v-for="item in menuItems" key="item.id" :value="item.id">
@@ -57,16 +57,17 @@
         class="sub-logo"
         src="/logo/sub-logo-1.svg"
       ></v-img>
+      <v-img
+        class="main-logo"
+        src="/logo/main-logo.svg"
+      ></v-img>
     </v-window-item>
     
-    <v-window-item :value="menuItems.length">
-      <HeaderMenu/>
+    <v-window-item transition="slide-x-reverse-transition" :value="menuItems.length">
+      <HeaderMenu @changeWindow="updateWindowMenu"/>
     </v-window-item>
   </v-window>
 </template>
-
-
-
 
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -90,6 +91,7 @@ export default defineComponent({
   data(){
     return {
       currentWindow: 0,
+      prevWindow: 0,
       menuItems: [
         {
           id: 0,
@@ -107,11 +109,35 @@ export default defineComponent({
           component: null
         }
       ],
+      showNav: true,
     }
   },
   methods: {
-    updateWindow(viewId: number) {
-      this.currentWindow = viewId;
+    updateWindow(viewId: number) 
+    {
+      if (viewId !== this.menuItems.length)
+      {
+        this.prevWindow = viewId;
+        this.currentWindow = viewId;
+        this.showNav = true;
+      }
+      else
+      {
+        if (this.showNav)
+      {
+        this.currentWindow = viewId;
+      }
+      else
+      {
+        this.currentWindow = this.prevWindow;
+          this.showNav = false;
+
+      }
+      }
+    },
+    updateWindowMenu(viewId: number)
+    {
+      
     }
   }
 })
@@ -119,8 +145,27 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.spacer {
+  height: 10vh;
+}
+
 .sub-logo {
   max-width: 90vw;
-  width: 70vw;
+  width: 80vw;
 }
+
+.main-logo {
+  max-width: 50vw;
+  width: 40vw;
+  transform: translateX(8vw) translateY(-17vh);
+}
+
+@media (max-width: 1080px) {
+  .main-logo {
+    max-width: 50vw;
+    transform: translateX(8vw) translateY(-9vh);
+  }
+
+}
+
 </style>

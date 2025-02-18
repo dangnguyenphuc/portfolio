@@ -15,5 +15,6 @@ declare module 'vue' {
     RickAndMorty: typeof import('./components/RickAndMorty/RickAndMorty.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ThemeButton: typeof import('./components/ThemeButton/ThemeButton.vue')['default']
   }
 }
