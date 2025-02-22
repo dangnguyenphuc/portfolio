@@ -1,6 +1,6 @@
 <template>
   <div class="main-menu bg-yellow">
-    <v-btn @click="buttonClick">hhee</v-btn>
+    <!-- <v-btn @click="buttonClick">hhee</v-btn> -->
 
     <div class="avatar" :class="{ 'avatar-enter': avatarVisible }">
       <v-img src="/logo/personel-avatar.svg"></v-img>

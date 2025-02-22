@@ -1,7 +1,7 @@
 <template>
-  <v-row v-if="displayNavbar"
+  <v-row v-if="showNavBar"
     class="header-bar position-fixed  d-flex pa-0 my-0 align-center justify-md-start justify-end mt-5">
-    <v-col class="d-none d-md-flex">
+    <v-col class="d-flex">
       <div class="d-flex flex-column ml-10 ga-2">
         <v-row>
           <div class="border-sm border-opacity-100 bg-primary text-caption menu-text">MENU</div>
@@ -18,14 +18,18 @@
     </v-col>
   </v-row>
   <div class="square-btn d-flex flex-column position-fixed top-0 right-0">
-    <v-btn @click="toggleTheme" :class="{ 'shift-down text-yellow': isShifted }"
+    <v-btn @click="toggleTheme" :class="{ 'shift-down text-yellow': currentWindow===menuItems.length }"
       class="theme-btn bg-red d-flex align-center justify-center pa-0">
       <v-icon class="mr-1 mb-2">{{ iconValue }}</v-icon>
     </v-btn>
-    {{ currentWindow }}
     <v-btn @click="toggleMenu"
-      class="menu-btn bg-red d-md-none d-flex align-center justify-center pa-0"
-      :class="{ 'shift-up text-yellow': isShifted }"
+      class="menu-btn bg-red align-center justify-center pa-0"
+      :class="{ 
+        'd-none':  currentWindow!==menuItems.length && showNavBar,
+        'd-flex':  currentWindow==menuItems.length ||!showNavBar,
+        'shift-up text-yellow': currentWindow===menuItems.length,
+        
+       }"
       >
       <v-icon class="mr-1 mt-3 menu-btn-content">mdi-menu</v-icon>
     </v-btn>
@@ -51,7 +55,7 @@ export default defineComponent({
       default: [],
       required: true
     },
-    displayNavbar: {
+    showNavBar: {
       type: Boolean,
       default: true,
       required: true
@@ -62,7 +66,6 @@ export default defineComponent({
       required: true
     }
   },
-
   computed: {
     iconValue() {
       return this.theme.global.name.value === 'light' ? 'mdi-lightbulb-off' : 'mdi-lightbulb-on';
@@ -74,7 +77,6 @@ export default defineComponent({
 
   data() {
     return {
-      isShifted: false,
     };
   },
 
@@ -84,7 +86,6 @@ export default defineComponent({
     },
 
     toggleMenu() {
-      this.isShifted = !this.isShifted;
       this.$emit('changeWindow', this.menuItems.length);
     },
 
@@ -96,7 +97,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* Add any additional styles if needed */
 .menu-text {
   font-weight: bold;
   padding: 0px 2px;
