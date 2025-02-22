@@ -1,10 +1,11 @@
 <template>
   <div class="main-menu bg-yellow">
     <!-- <v-btn @click="buttonClick">hhee</v-btn> -->
-
-    <div class="avatar" :class="{ 'avatar-enter': avatarVisible }">
-      <v-img src="/logo/personel-avatar.svg"></v-img>
-    </div>
+    <transition name="avatar">
+      <div class="avatar">
+        <v-img src="/logo/personel-avatar.svg" alt="Dang Nguyen"></v-img>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -16,18 +17,13 @@ export default defineComponent({
   setup() { },
   data() {
     return {
-      avatarVisible: false,
     };
   },
   mounted() {
-    setTimeout(() => {
-      this.avatarVisible = true;
-    }, 500);
   },
   methods: {
     buttonClick() {
-      this.$emit('changeWindow',0);
-      this.avatarVisible = false;
+
     }
   }
 
@@ -45,15 +41,29 @@ export default defineComponent({
 
 .avatar {
   position: fixed;
-  top: calc(100vh - 29vw);
-  left: calc(100vw - 30vw);
+  top: calc(100vh - 32vw);  /* Start position (off-screen) */
+  left: calc(100vw - 25vw);
   width: 30vw;
   rotate: -30deg;
-  transition: transform 0.1s ease;
-  transform: translate(100vw, 100vh);
+  transition: top 0.5s ease-in, left 0.5s ease-in;
 }
 
-.avatar-enter {
-  transform: translate(0, 0);
+/* When entering */
+.avatar-enter-active {
+  transition: top 0.5s ease-in, left 0.5s ease-in;
+}
+
+.avatar-enter-from {
+  top: 100vh;
+  left: 100vw;
+}
+
+.avatar-enter-to {
+  top: calc(100vh - 32vw);
+  left: calc(100vw - 25vw);
+}
+
+.avatar-leave-active {
+  display: none;
 }
 </style>
