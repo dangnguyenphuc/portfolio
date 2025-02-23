@@ -50,37 +50,31 @@
 
 <template>
   <Header @changeWindow="updateWindow" :menuItems="menuItems" :showNavBar="showNav" :currentWindow="currentWindow" />
-
   <v-window v-model="currentWindow">
     <v-window-item v-for="item in menuItems" key="item.id" :value="item.id">
-      <v-img class="sub-logo" src="/logo/sub-logo-1.svg"></v-img>
-      <v-img class="main-logo" src="/logo/main-logo.svg"></v-img>
-
-      <h1>{{ item.title }}</h1>
+      <component :is="item.component"/>
     </v-window-item>
 
     <v-window-item transition="slide-x-reverse-transition" :value="menuItems.length">
-      <HeaderMenu @changeWindow="updateWindowMenu"  :menuItems="menuItems" :currentWindow="currentWindow" />
+      <HeaderMenu @changeWindow="updateWindowMenu"  :menuItems="menuItems" :currentWindow="prevWindow" />
     </v-window-item>
   </v-window>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, markRaw } from 'vue'
 import RickAndMorty from './RickAndMorty/RickAndMorty.vue';
 import Header from './Header/Header.vue';
 import HeaderMenu from './Header/HeaderMenu.vue';
 import { useDisplay } from 'vuetify';
+import Gallery from './MainPage/Gallery/Gallery.vue';
+import Project from './MainPage/Project/Project.vue';
+import Contact from './MainPage/Contact/Contact.vue';
 
 export interface Window {
   id: number,
   title: string,
   component: any
-}
-
-export interface DataType {
-  currentWindow: Number,
-  menuItems: Array<Window>
 }
 
 export default defineComponent({
@@ -97,18 +91,18 @@ export default defineComponent({
       menuItems: [
         {
           id: 0,
-          title: 'TOP',
-          component: null
+          title: 'GALLERY',
+          component: markRaw(Gallery)
         },
         {
           id: 1,
           title: 'PROJECTS',
-          component: null
+          component: markRaw(Project)
         },
         {
           id: 2,
           title: 'CONTACT',
-          component: null
+          component: markRaw(Contact)
         }
       ],
     }
@@ -144,7 +138,9 @@ export default defineComponent({
       }
     },
     updateWindowMenu(viewId: number) {
-
+      this.prevWindow = viewId;
+      this.currentWindow = viewId;
+      this.showNav = this.mdAndUp;
     }
   }
 })
@@ -152,26 +148,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.spacer {
-  height: 10vh;
-}
-
-.sub-logo {
-  max-width: 90vw;
-  width: 80vw;
-}
-
-.main-logo {
-  max-width: 50vw;
-  width: 40vw;
-  transform: translateX(8vw) translateY(-17vh);
-}
-
-@media (max-width: 1280px) {
-  .main-logo {
-    max-width: 50vw;
-    transform: translateX(8vw) translateY(-9vh);
-  }
-
-}
 </style>
