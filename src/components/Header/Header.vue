@@ -48,7 +48,6 @@ export default defineComponent({
     const theme = useTheme();
     return { theme };
   },
-
   props: {
     menuItems: {
       type: Array<Window>,
