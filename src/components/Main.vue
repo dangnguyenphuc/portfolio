@@ -53,14 +53,14 @@
 
   <v-window v-model="currentWindow">
     <v-window-item v-for="item in menuItems" key="item.id" :value="item.id">
-      <v-img class="sub-logo" src="/logo/sub-logo-1.svg"></v-img>
-      <v-img class="main-logo" src="/logo/main-logo.svg"></v-img>
+      <v-img class="sub-logo" src="/logo/svg/sub-logo-1.svg"></v-img>
+      <v-img class="main-logo" src="/logo/svg/main-logo.svg"></v-img>
 
       <h1>{{ item.title }}</h1>
     </v-window-item>
 
     <v-window-item transition="slide-x-reverse-transition" :value="menuItems.length">
-      <HeaderMenu @changeWindow="updateWindowMenu"  :menuItems="menuItems" :currentWindow="currentWindow" />
+      <HeaderMenu @changeWindow="updateWindowMenu"  :menuItems="menuItems" :currentWindow="prevWindow" />
     </v-window-item>
   </v-window>
 </template>
