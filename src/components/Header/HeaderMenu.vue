@@ -5,7 +5,7 @@
         <v-img src="/logo/svg/personel-avatar.svg" alt="Dang Nguyen"></v-img>
       </div>
     </transition>
-      <v-img class="main-logo" src="/logo/svg/main-logo.svg"></v-img>
+      <v-img class="main-logo" :src="'/logo/svg/main-logo-' + theme.global.name.value + '.svg'"></v-img>
     <v-container class="main-container d-flex align-center mt-10">
       <v-row class="container-row d-flex align-center">
         <v-col cols="12" sm="6" lg="5" v-for="(item) in menuItems" :key="item.id">
