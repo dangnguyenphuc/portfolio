@@ -59,6 +59,7 @@
       <HeaderMenu @changeWindow="updateWindowMenu"  :menuItems="menuItems" :currentWindow="prevWindow" />
     </v-window-item>
   </v-window>
+  
 </template>
 
 <script lang="ts">

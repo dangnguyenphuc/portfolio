@@ -1,6 +1,6 @@
 <template>
   <v-row v-if="showNavBar"
-    class="header-bar position-fixed  d-flex pa-0 my-0 align-center justify-md-start justify-end mt-5">
+    class="header-bar position-fixed  d-flex pa-0 my-0 align-center justify-md-start justify-end">
     <v-col class="d-flex">
       <div class="d-flex flex-column ml-10 ga-2">
         <v-row>

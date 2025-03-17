@@ -74,7 +74,6 @@ export default defineComponent({
 .avatar {
   position: fixed;
   top: calc(100vh - 32vw);
-  /* Start position (off-screen) */
   z-index: 1000;
   left: calc(100vw - 25vw);
   width: 30vw;
