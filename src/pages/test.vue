@@ -1,11 +1,15 @@
 <template>
     <main>
-        <canvas id="myCanvas" width="1024" height="576"></canvas>
+        <canvas id="myCanvas" :width="pokeCanvasWidth" :height="pokeCanvasHeight"></canvas>
     </main>
 </template>
 
 <script lang="ts">
+import { useDisplay } from 'vuetify'
+
 import map from '../../public/rpg-assets/Tiled/main-map.json';
+
+const VELOCITY = 3;
 
 class Coordinate2D {
   // Properties for x and y coordinates
@@ -59,7 +63,7 @@ class Boundary {
     {
         ctx.fillStyle = 'red';
         ctx.fillRect(this.position.x + offset.x, this.position.y + offset.y, this.width, this.height);
-        console.log("Draw at", this.position.x + offset.x, this.position.y + offset.y)
+        // console.log("Draw at", this.position.x + offset.x, this.position.y + offset.y)
     }
 
 }
@@ -78,6 +82,21 @@ class Sprite {
     {
         ctx.drawImage(this.image, this.position.x + offset.x, this.position.y + offset.y);
     }
+
+    drawPlayer(ctx: CanvasRenderingContext2D, image:HTMLImageElement, animation: number[] = [1,1], offset: Coordinate2D = new Coordinate2D(0,0))
+    {
+        ctx.drawImage(
+            image, 
+            0,
+            0,
+            image.width/animation[0],
+            image.height/animation[1],
+            this.position.x + offset.x,
+            this.position.y + offset.y,
+            image.width/animation[0],
+            image.height/animation[1]
+        );
+    }
 }
 
 class Map {
@@ -89,7 +108,7 @@ class Map {
         this.mapSprite = new Sprite(position, image);
         this.offset = offset;
         this.boundaries = boundaries;
-        console.log(this.boundaries);
+        // console.log(this.boundaries);
     }
 
     draw(ctx: CanvasRenderingContext2D)
@@ -186,35 +205,47 @@ class Player {
         });
     }
 
-    draw(ctx: CanvasRenderingContext2D)
+    draw(ctx: CanvasRenderingContext2D, map: Map)
     {
-        this.control()
-        this.sprite.draw(ctx)
+        this.control(map.offset)
+        this.sprite.drawPlayer(ctx, this.sprite.image, [4,1], map.offset)
     }
 
-    control()
+    control(offset: Coordinate2D)
     {
         if (this.keys.w.pressed && this.lastKey == 'w')
         {
-            this.sprite.position.y -= 3;
+            this.sprite.position.y -= VELOCITY;
+            offset.y += VELOCITY;
         }   
         else if (this.keys.a.pressed && this.lastKey == 'a')
         {
-            this.sprite.position.x -= 3;
+            this.sprite.position.x -= VELOCITY;
+            offset.x += VELOCITY;
         }   
         else if (this.keys.s.pressed && this.lastKey == 's')
         {
-            this.sprite.position.y += 3;
+            this.sprite.position.y += VELOCITY;
+            offset.y -= VELOCITY;
         }   
         else if (this.keys.d.pressed && this.lastKey == 'd')
         {
-            this.sprite.position.x += 3;
+            this.sprite.position.x += VELOCITY;
+            offset.x -= VELOCITY;
         }   
     }
 }
 
 export default {
-
+    name: "PokemonGame",
+    setup: () => {
+        const {lgAndUp, md, smAndDown} = useDisplay();
+        return {
+            lgAndUp,
+            md,
+            smAndDown
+        }
+    },
     mounted() {
         const boundaries: Boundary[] = []
         const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
@@ -261,7 +292,7 @@ export default {
         {
             window.requestAnimationFrame(animate);
             mainMap.draw(ctx);
-            player.draw(ctx);
+            player.draw(ctx, mainMap);
             // ctx.drawImage(playerImg, 
             //     0,
             //     0,
@@ -277,6 +308,47 @@ export default {
 
         animate();
     },
+
+    computed: {
+        pokeCanvasWidth()
+        {
+            if (this.lgAndUp)
+            {
+                return 1024;
+            }
+
+            if (this.md)
+            {
+                return 896;
+            }
+
+            if (this.smAndDown)
+            {
+                return 400;
+            }
+        },
+        pokeCanvasHeight()
+        {
+            if (this.lgAndUp)
+            {
+                return 576;
+            }
+
+            if (this.md)
+            {
+                return 504;
+            }
+
+            if (this.smAndDown)
+            {
+                return 300;
+            }
+        }
+    },
+
+    methods: {
+
+    }
   };
 </script>
 

@@ -71,7 +71,7 @@ const dark = {             // Default dark theme
     warning: '#FB8C00',
     yellow: '#fecb07',
     red: '#b40011',
-    highlight: '#46825A',
+    highlight: '#FBC02D',
   }
 }
 
