@@ -1,11 +1,11 @@
 <template>
-  <!-- <Header @changeWindow="updateWindow" :menuItems="menuItems" :showNavBar="showNav" :currentWindow="currentWindow" /> -->
+  <Header @changeWindow="updateWindow" :menuItems="menuItems" :showNavBar="showNav" :currentWindow="currentWindow" />
   <v-window v-model="currentWindow">
     <v-window-item v-for="item in menuItems" key="item.id" :value="item.id">
       <component :is="item.component"/>
     </v-window-item>
 
-    <v-window-item transition="slide-x-reverse-transition" :value="menuItems.length">
+    <v-window-item :value="menuItems.length">
       <HeaderMenu @changeWindow="updateWindowMenu"  :menuItems="menuItems" :currentWindow="prevWindow" />
     </v-window-item>
   </v-window>

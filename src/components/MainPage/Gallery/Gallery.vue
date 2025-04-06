@@ -1,6 +1,6 @@
 <template>
-    <!-- <v-img class="sub-logo" :src="'/logo/svg/sub-logo-1-' + theme.global.name.value + '.svg'"></v-img>
-    <v-img class="main-logo" :src="'/logo/svg/main-logo-' + theme.global.name.value + '.svg'"></v-img> -->
+    <v-img class="sub-logo" :src="'/logo/svg/sub-logo-1-' + theme.global.name.value + '.svg'"></v-img>
+    <v-img class="main-logo" :src="'/logo/svg/main-logo-' + theme.global.name.value + '.svg'"></v-img>
     <div class="main-container" v-touch="{
             left: () => showSlider('next'),
             right: () => showSlider('prev'),
@@ -218,13 +218,13 @@ export default defineComponent({
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    /* height: 100vh; */
     overflow: hidden;
 }
 
 .carousel {
     position: relative;
-    height: 100vh;
+    height: 90vh;
     overflow: hidden;
     margin-top: -50px;
 }
