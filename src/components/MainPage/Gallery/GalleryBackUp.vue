@@ -6,7 +6,7 @@
             cycle>
             <transition-group name="diagonal-slide">
                 <v-carousel-item v-for="(slide, i) in slideItems" :key="i">
-                    <v-card
+                <v-card
                     variant="text"
                     class="description-container"
                 >

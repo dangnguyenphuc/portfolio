@@ -2,11 +2,10 @@
     <v-img class="sub-logo" :src="'/logo/svg/sub-logo-1-' + theme.global.name.value + '.svg'"></v-img>
     <v-img class="main-logo" :src="'/logo/svg/main-logo-' + theme.global.name.value + '.svg'"></v-img>
     <div class="main-container" v-touch="{
-            left: () => showSlider('next'),
-            right: () => showSlider('prev'),
+            left: () => nextSlide(),
+            right: () => prevSlide(),
         }"
     >
-
         <div class="carousel">
             <div class="list">
                 <div class="item" v-for="(item, index) in slideItems" :key="index">
@@ -24,7 +23,7 @@
 
         <div class="custom-delimiters d-flex flex-column justify-center align-center">
             <div v-for="(slide, i) in slideItems" :key="i" @click="changeSlide(i)">
-                <v-img class="delimeter-image" :class="{ 'delimeter-active': slide.id === selectedItem }"
+                <v-img class="delimeter-image" :class="{ 'delimeter-active': slide.id === itemArray[1] }"
                     :src="slide.image"></v-img>
             </div>
 
@@ -33,6 +32,8 @@
             </v-row>
         </div>
     </div>
+
+    
 </template>
 
 <script lang="ts">
@@ -52,7 +53,6 @@ export default defineComponent({
             intervalId: null as number | null,
             carousel: null as HTMLElement | null,
             listHTML: null as HTMLElement | null,
-            selectedItem: 0,
             slideItems: [
                 {
                     id: 0,
@@ -114,13 +114,15 @@ export default defineComponent({
                         text: '',
                     }
                 }
-            ]
+            ],
+            itemArray: [] as number[],
         }
     },
     mounted() {
         this.carousel = document.querySelector('.carousel');
         this.listHTML = document.querySelector('.carousel .list');
-        this.intervalId = setInterval(this.showSlider, 5000, 'next');
+        this.intervalId = setInterval(this.showSlider, Config.GALLERY_SLIDE_TIME, 'next');
+        this.itemArray = Array.from({ length: this.slideItems.length }, (_, i) => i);
     },
     beforeDestroy() {
         if (this.intervalId) clearInterval(this.intervalId);
@@ -131,18 +133,17 @@ export default defineComponent({
     methods:
     {
         prevSlide() {
-            this.selectedItem = (this.selectedItem - 1) < 0 ? this.slideItems.length - 1 : this.selectedItem - 1
+            this.showSlider('prev');
         },
         nextSlide() {
-            this.selectedItem = (this.selectedItem + 1) % this.slideItems.length;
+            this.showSlider('next');
         },
         changeSlide(i: number) {
             if (i < 0 || i >= this.slideItems.length) return;
-            this.selectedItem = i;
+            this.showSlider('', i);
         },
-        showSlider(type: String)
+        showSlider(type: String, slideId: number = -1)
         {
-            
             this.carousel?.classList.remove('next', 'prev');
 
             const items = document.querySelectorAll('.carousel .list .item');
@@ -151,17 +152,43 @@ export default defineComponent({
                 clearInterval(this.intervalId);
             }
             
-            this.intervalId = setInterval(this.showSlider, 5000, 'next');
+            this.intervalId = setInterval(this.showSlider, Config.GALLERY_SLIDE_TIME, 'next');
 
-            if (type === 'next') {
+            if (type === 'next') 
+            {
                 this.listHTML?.appendChild(items[0]);
+                this.itemArray.push(this.itemArray[0]);
+                this.itemArray.shift();
                 this.carousel?.classList.add('next');
-            } else {
+            } 
+            else if (type == 'prev')
+            {
                 this.listHTML?.prepend(items[items.length - 1]);
+                this.itemArray.unshift(this.itemArray[this.itemArray.length - 1]);
+                this.itemArray.pop();
                 this.carousel?.classList.add('prev');
             }
+            else if (slideId >= 0 && slideId < this.itemArray.length)
+            {
+
+                if (slideId < this.itemArray[1])
+                {
+                    while(this.itemArray[1] != slideId)
+                    {
+                        this.showSlider('prev');
+                    }
+                }
+                else
+                {
+                    while(this.itemArray[1] != slideId)
+                    {
+                        this.showSlider('next');
+                    }
+                }
+                
+            }
         }
-    }
+    },
 })
 
 </script>
@@ -218,13 +245,12 @@ export default defineComponent({
     top: 0;
     left: 0;
     width: 100vw;
-    /* height: 100vh; */
     overflow: hidden;
 }
 
 .carousel {
     position: relative;
-    height: 90vh;
+    height: 100vh;
     overflow: hidden;
     margin-top: -50px;
 }
@@ -650,6 +676,7 @@ export default defineComponent({
 
 .delimeter-active {
     filter: grayscale(0%);
+    height: 60px;
 }
 
 .menu-text {
