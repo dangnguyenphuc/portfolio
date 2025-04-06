@@ -10,6 +10,7 @@ declare module 'vue' {
     AppFooter: typeof import('./components/Footer/AppFooter.vue')['default']
     Contact: typeof import('./components/MainPage/Contact/Contact.vue')['default']
     Gallery: typeof import('./components/MainPage/Gallery/Gallery.vue')['default']
+    GalleryBackUp: typeof import('./components/MainPage/Gallery/GalleryBackUp.vue')['default']
     Header: typeof import('./components/Header/Header.vue')['default']
     HeaderMenu: typeof import('./components/Header/HeaderMenu.vue')['default']
     HelloWorld: typeof import('./components/Main.vue')['default']
