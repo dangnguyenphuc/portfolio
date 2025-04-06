@@ -1,4 +1,6 @@
 // GALLERY ITEMS ========================================================================
+export const GALLERY_SLIDE_TIME = 5000
+
 export const GALLERY_COLOR_1 = 'green'
 export const GALLERY_IMAGE_1 = '/test-images/img1.png'
 export const GALLERY_TITLE_1 = 'First'
