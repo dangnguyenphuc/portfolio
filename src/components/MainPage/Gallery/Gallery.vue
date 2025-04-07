@@ -9,12 +9,27 @@
         <div class="carousel">
             <div class="list">
                 <div class="item" v-for="(item, index) in slideItems" :key="index">
+                    <div class="d-flex flex-column pa-5 justify-center pa-0 align-center carousel-text mid">
+                            <div :class="'blood blur bg-' + item.color">
+                                <v-row class="carousel-text-1">
+                                    <v-col cols="12"
+                                        class="d-flex justify-center font-weight-black align-center">
+                                        <span class="main-item-text">
+                                            {{ item.text }}
+                                        </span>
+                                    </v-col>
+                                    <v-col cols="12">
+                                    </v-col>
+                                </v-row>
+                            </div>
+
+                        </div>
                         <img :src="item.image">
                         <div class="introduce">
-                            <div class="title">{{ slideItems[0].detailText.title }}</div>
+                            <div class="title">{{ item.detailText.title }}</div>
                             <div class="topic">Aerphone</div>
                             <div class="des">
-                                {{slideItems[0].detailText.text}}
+                                {{item.detailText.text}}
                             </div>
                         </div>
                 </div>
@@ -198,12 +213,12 @@ export default defineComponent({
 
 :root {
 
-    --item0-transform: translate(-150%, 40%) scale(0.5);
+    --item0-transform: translate(-150%, 40%) scale(0.75);
     --item0-filter: blur(40px);
     --item0-zIndex: 9;
     --item0-opacity: 0;
 
-    --item1-transform: translateX(-70%) translateY(30%) scale(0.5);
+    --item1-transform: translateX(-70%) translateY(30%) scale(0.75);
     --item1-filter: blur(30px);
     --item1-zIndex: 9;
     --item1-opacity: 1;
@@ -213,17 +228,17 @@ export default defineComponent({
     --item2-zIndex: 10;
     --item2-opacity: 1;
 
-    --item3-transform: translate(70%, -30%) scale(0.5);
+    --item3-transform: translate(70%, -30%) scale(0.75);
     --item3-filter: blur(10px);
     --item3-zIndex: 9;
     --item3-opacity: 1;
 
-    --item4-transform: translate(150%, -40%) scale(0.5);
+    --item4-transform: translate(150%, -40%) scale(0.75);
     --item4-filter: blur(30px);
     --item4-zIndex: 8;
     --item4-opacity: 1;
 
-    --item5-transform: translate(200%, -50%) scale(0.5);
+    --item5-transform: translate(200%, -50%) scale(0.75);
     --item5-filter: blur(40px);
     --item5-zIndex: 7;
     --item5-opacity: 0;
@@ -255,12 +270,11 @@ export default defineComponent({
     position: relative;
     height: 100vh;
     overflow: hidden;
-    margin-top: -50px;
 }
 
 .carousel .list {
     position: absolute;
-    width: 90vw;
+    width: 100vw;
     max-width: 100%;
     height: 100%;
     left: 50%;
@@ -304,8 +318,9 @@ export default defineComponent({
     pointer-events: auto;
     width: 400px;
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 60%;
+    left: 5%;
+    transform: translateY(-60%);
     transition: opacity 0.5s;
 }
 
@@ -461,6 +476,98 @@ export default defineComponent({
     animation: transformFromPosition0 1.1s ease-in-out 1 forwards;
 }
 
+.description-container {
+    position: absolute;
+    width: 30vw;
+    z-index: 200;
+    top: 40vh;
+    left: 0;
+}
+
+.carousel-text {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-40%);
+    z-index: 0;
+    text-align: center;
+    rotate: -10deg;
+    width: 100vw;
+}
+
+.carousel-text-1 {
+    width: 150vw;
+    padding: 12vh 0;
+}
+
+.blur {
+    filter: blur(2px);
+    -webkit-filter: blur(2px);
+}
+
+.blood {
+    background-image: url(/backgrounds/bg-main.png);
+    background-repeat: repeat;
+}
+
+.main-item-text {
+    text-align: center;
+    font-family: "Poppins", sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 12rem;
+}
+
+.custom-delimiters {
+    z-index: 101;
+    position: absolute;
+    top: 25vh;
+    right: 5vw;
+}
+
+.delimeter-image {
+    width: 100px !important;
+    height: 40px;
+    object-fit: cover;
+    overflow: hidden;
+    filter: grayscale(100%);
+    cursor: pointer;
+    transition: height 0.3s ease-in-out;
+}
+
+.delimeter-image:hover {
+    height: 60px;
+}
+
+
+.delimeter-active {
+    filter: grayscale(0%);
+    height: 60px;
+}
+
+.menu-text {
+    font-weight: bold;
+    padding: 0px 2px;
+}
+
+.menu-text.rotate-90
+{
+    rotate: 90deg;
+}
+
+@media (max-width: 1280px) {
+    .main-logo {
+        width: 60vw;
+        top: 3vh;
+        left: 5vw;
+    }
+}
+
+@media (max-width: 960px) {
+    .main-item-text {
+        font-size: 6rem;
+    }
+}
+
 @keyframes transformFromPosition1 {
     from {
         transform: var(--item1-transform);
@@ -495,202 +602,5 @@ export default defineComponent({
     .carousel .list .item img {
         width: 100%;
     }
-}
-
-.description-container {
-    position: absolute;
-    width: 30vw;
-    z-index: 200;
-    top: 40vh;
-    left: 0;
-    /* top: 70vh; */
-    /* right: 10vw; */
-}
-
-.description-text {
-    font-size: 1vw;
-    font-weight: 800;
-}
-
-.carousel-container {
-    position: relative;
-}
-
-.carousel-image {
-    width: 50vw;
-    z-index: 100;
-}
-
-.carousel-text {
-    position: absolute;
-    z-index: 1;
-    text-align: center;
-    rotate: -15deg;
-    width: 140vw;
-}
-
-.carousel-text-1 {
-    width: 140vw;
-    padding: 12vh 0;
-}
-
-.carousel-text-2 {
-    width: 140vw;
-    height: 100vh;
-}
-
-.mid {
-    left: -20vw;
-}
-
-.left {
-    bottom: 10vh;
-    width: 25vw;
-    left: -17vw;
-    z-index: 2;
-}
-
-.right {
-    top: 10vh;
-    width: 25vw;
-    right: -17vw;
-    z-index: 2;
-}
-
-.blur {
-    filter: blur(2px);
-    -webkit-filter: blur(2px);
-}
-
-.side-image {
-    position: absolute;
-    width: 50%;
-    z-index: 2;
-}
-
-.left-side {
-    left: -40vw;
-    bottom: 5vh;
-}
-
-.right-side {
-    right: -40vw;
-    top: 5vh;
-}
-
-.right-side.blur {
-    filter: blur(2px);
-    -webkit-filter: blur(2px);
-}
-
-.blood {
-    background-image: url(/backgrounds/bg-main.png);
-    background-repeat: repeat;
-}
-
-.main-item-text {
-    font-family: "Poppins", sans-serif;
-    font-weight: 900;
-    font-style: italic;
-    font-size: 12rem;
-}
-
-.main-icon {
-    font-size: 5rem;
-}
-
-@media (max-width: 1280px) {
-    .main-logo {
-        width: 60vw;
-        top: 3vh;
-        left: 5vw;
-    }
-
-    .description-container {
-        width: 40vw;
-    }
-
-    .description-text {
-        font-size: 2vw;
-    }
-}
-
-@media (max-width: 960px) {
-
-    .right,
-    .left {
-        width: 38vw;
-    }
-
-    .left-side {
-        left: -10vw;
-        bottom: 5vh;
-    }
-
-    .right-side {
-        right: -10vw;
-        top: 5vh;
-    }
-
-    .description-container {
-        top: 12vh;
-        width: 50vw;
-    }
-}
-
-/* Diagonal Transition Effect */
-.diagonal-slide-enter-active,
-.diagonal-slide-leave-active {
-    transition: transform 0.8s ease-in-out, opacity 0.5s ease-in-out;
-}
-
-/* Old Image moves from top-right to bottom-left */
-.diagonal-slide-leave-to {
-    transform: translate(-20%, 20%);
-    opacity: 0;
-}
-
-/* New Image enters from top-right */
-.diagonal-slide-enter-from {
-    transform: translate(20%, -20%);
-    opacity: 0;
-}
-
-.custom-delimiters {
-    z-index: 101;
-    position: absolute;
-    top: 25vh;
-    right: 5vw;
-}
-
-.delimeter-image {
-    width: 100px !important;
-    height: 40px;
-    object-fit: cover;
-    overflow: hidden;
-    filter: grayscale(100%);
-    cursor: pointer;
-    transition: height 0.3s ease-in-out;
-}
-
-.delimeter-image:hover {
-    height: 60px;
-}
-
-
-.delimeter-active {
-    filter: grayscale(0%);
-    height: 60px;
-}
-
-.menu-text {
-    font-weight: bold;
-    padding: 0px 2px;
-    
-}
-
-.menu-text.rotate-90
-{
-    rotate: 90deg;
 }
 </style>
