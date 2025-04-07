@@ -6,11 +6,11 @@
       </div>
     </transition>
     <div class="main-container d-flex flex-column">
-      <v-row no-gutters class="main-logo pa-0">
+      <v-row no-gutters class="d-flex menu-header-logo ma-5">
         <v-img :src="'/logo/svg/main-logo-'+ theme.global.name.value +'.svg'"></v-img>
       </v-row>
-      <v-row no-gutters class="container-row d-flex align-center">
-        <v-col no-gutters cols="12" sm="6" lg="6" v-for="(item) in menuItems" :key="item.id" class="pa-0">
+      <v-row no-gutters class="d-flex align-center ga-5">
+        <v-col v-for="(item) in menuItems" :key="item.id" class="pa-0">
           <div
           @click="changeWindow(item)"
           :class="'slide-bg d-flex flex-row ' + backgroundValue + (item.id === currentWindow ? ' bg-primary-darken-1 text-highlight' : '')">
@@ -84,27 +84,8 @@ export default defineComponent({
   transition: top 0.25s ease-in, left 0.25s ease-in;
 }
 
-/* When entering */
-.avatar-enter-active {
-  transition: top 0.25s ease-in, left 0.25s ease-in;
-}
-
-.avatar-enter-from {
-  top: 100vh;
-  left: 100vw;
-}
-
-.avatar-enter-to {
-  top: calc(100vh - 32vw);
-  left: calc(100vw - 25vw);
-}
-
-.avatar-leave-active {
-  display: none;
-}
-
-.main-logo {
-  width: 70vw;
+.menu-header-logo {
+  width: 60vw;
 }
 
 
@@ -148,11 +129,7 @@ export default defineComponent({
 }
 
 .main-container {
-  height: 100vh;
-  width: 100vw;
-}
-
-.container-row {
-
+  /* width: 100vw;
+  height: 100vh; */
 }
 </style>

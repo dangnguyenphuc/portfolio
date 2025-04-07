@@ -236,8 +236,10 @@ export default defineComponent({
 
 .main-logo {
     width: 40vw;
-    transform: translateX(8vw) translateY(-17vh);
-    z-index: 3 !important;
+    position: absolute;
+    top: 10vh;
+    left: 10vw;
+    z-index: 4 !important;
 }
 
 .main-container {
@@ -246,6 +248,7 @@ export default defineComponent({
     left: 0;
     width: 100vw;
     overflow: hidden;
+    z-index: 3 !important;
 }
 
 .carousel {
@@ -599,7 +602,8 @@ export default defineComponent({
 @media (max-width: 1280px) {
     .main-logo {
         width: 60vw;
-        transform: translateX(8vw) translateY(-9vh);
+        top: 3vh;
+        left: 5vw;
     }
 
     .description-container {
