@@ -5,19 +5,21 @@
         <v-img src="/logo/svg/personel-avatar.svg" alt="Dang Nguyen"></v-img>
       </div>
     </transition>
-      <v-img class="main-logo" :src="'/logo/svg/main-logo-' + theme.global.name.value + '.svg'"></v-img>
-    <v-container class="main-container d-flex align-center mt-10">
-      <v-row class="container-row d-flex align-center">
-        <v-col cols="12" sm="6" lg="5" v-for="(item) in menuItems" :key="item.id">
+    <div class="main-container d-flex flex-column">
+      <v-row no-gutters class="d-flex menu-header-logo ma-5">
+        <v-img :src="'/logo/svg/main-logo-'+ theme.global.name.value +'.svg'"></v-img>
+      </v-row>
+      <v-row no-gutters class="d-flex align-center ga-5">
+        <v-col v-for="(item) in menuItems" :key="item.id" class="pa-0">
           <div
           @click="changeWindow(item)"
           :class="'slide-bg d-flex flex-row ' + backgroundValue + (item.id === currentWindow ? ' bg-primary-darken-1 text-highlight' : '')">
           <div class="text-h4 font-weight-bold">{{ item.id + 1 }}</div>
-          <div class="font-weight-bold">{{ item.title }}</div>
+          <div class="text-md-h1 text-h2 font-weight-bold">{{ item.title }}</div>
           </div>
         </v-col>
       </v-row>
-    </v-container>
+    </div>
   </div>
 </template>
 
@@ -66,6 +68,7 @@ export default defineComponent({
 <style scoped>
 .main-menu {
   background-image: url(/backgrounds/bg-main.png);
+  background-repeat: repeat;
   height: 100vh;
   width: 100vw;
   overflow: auto;
@@ -81,27 +84,8 @@ export default defineComponent({
   transition: top 0.25s ease-in, left 0.25s ease-in;
 }
 
-/* When entering */
-.avatar-enter-active {
-  transition: top 0.25s ease-in, left 0.25s ease-in;
-}
-
-.avatar-enter-from {
-  top: 100vh;
-  left: 100vw;
-}
-
-.avatar-enter-to {
-  top: calc(100vh - 32vw);
-  left: calc(100vw - 25vw);
-}
-
-.avatar-leave-active {
-  display: none;
-}
-
-.main-logo {
-  width: 70vw;
+.menu-header-logo {
+  width: 60vw;
 }
 
 
@@ -145,10 +129,7 @@ export default defineComponent({
 }
 
 .main-container {
-  height: 50vh;
-}
-
-.container-row {
-
+  /* width: 100vw;
+  height: 100vh; */
 }
 </style>
