@@ -9,7 +9,7 @@
         <div class="carousel">
             <div class="list">
                 <div class="item" v-for="(item, index) in slideItems" :key="index">
-                    <div class="d-flex flex-column pa-5 justify-center pa-0 align-center carousel-text mid">
+                    <div class="d-flex flex-column pa-5 justify-center pa-0 align-center carousel-text">
                             <div :class="'blood blur bg-' + item.color">
                                 <v-row class="carousel-text-1">
                                     <v-col cols="12"
@@ -246,7 +246,7 @@ export default defineComponent({
 
 .sub-logo {
     width: 90vw;
-    z-index: 2 !important;
+    z-index: 9 !important;
 }
 
 .main-logo {
@@ -254,7 +254,7 @@ export default defineComponent({
     position: absolute;
     top: 10vh;
     left: 10vw;
-    z-index: 4 !important;
+    z-index: 1001 !important;
 }
 
 .main-container {
@@ -474,14 +474,6 @@ export default defineComponent({
 
 .carousel.prev .list .item:nth-child(1) {
     animation: transformFromPosition0 1.1s ease-in-out 1 forwards;
-}
-
-.description-container {
-    position: absolute;
-    width: 30vw;
-    z-index: 200;
-    top: 40vh;
-    left: 0;
 }
 
 .carousel-text {
