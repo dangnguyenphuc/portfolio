@@ -487,7 +487,7 @@ export default defineComponent({
 .carousel-text {
     position: absolute;
     top: 50%;
-    transform: translateY(-40%);
+    transform: translateY(-50%);
     z-index: 0;
     text-align: center;
     rotate: -10deg;
