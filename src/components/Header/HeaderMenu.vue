@@ -1,0 +1,135 @@
+<template>
+  <div class="main-menu bg-yellow">
+    <transition name="avatar">
+      <div class="avatar">
+        <v-img src="/logo/svg/personel-avatar.svg" alt="Dang Nguyen"></v-img>
+      </div>
+    </transition>
+    <div class="main-container d-flex flex-column">
+      <v-row no-gutters class="d-flex menu-header-logo ma-5">
+        <v-img :src="'/logo/svg/main-logo-'+ theme.global.name.value +'.svg'"></v-img>
+      </v-row>
+      <v-row no-gutters class="d-flex align-center ga-5">
+        <v-col v-for="(item) in menuItems" :key="item.id" class="pa-0">
+          <div
+          @click="changeWindow(item)"
+          :class="'slide-bg d-flex flex-row ' + backgroundValue + (item.id === currentWindow ? ' bg-primary-darken-1 text-highlight' : '')">
+          <div class="text-h4 font-weight-bold">{{ item.id + 1 }}</div>
+          <div class="text-md-h1 text-h2 font-weight-bold">{{ item.title }}</div>
+          </div>
+        </v-col>
+      </v-row>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { useTheme } from 'vuetify';
+import type { Window } from '../Main.vue';
+
+export default defineComponent({
+  name: 'HeaderMenu',
+  setup() {
+    const theme = useTheme();
+    return { theme };
+  },
+  data() {
+    return {
+    };
+  },
+  mounted() {
+  },
+  methods: {
+    changeWindow(item: Window) {
+      this.$emit("changeWindow", item.id);
+    }
+  },
+  computed: {
+    backgroundValue() {
+      return this.theme.global.name.value === 'light' ? 'light' : 'dark';
+    }
+  },
+  props: {
+    menuItems: {
+      type: Array<Window>,
+      default: [],
+      required: true
+    },
+    currentWindow: {
+      type: Number,
+      default: 0,
+      required: true
+    }
+  },
+});
+</script>
+
+<style scoped>
+.main-menu {
+  background-image: url(/backgrounds/bg-main.png);
+  background-repeat: repeat;
+  height: 100vh;
+  width: 100vw;
+  overflow: auto;
+}
+
+.avatar {
+  position: fixed;
+  top: calc(100vh - 32vw);
+  z-index: 1000;
+  left: calc(100vw - 25vw);
+  width: 30vw;
+  rotate: -30deg;
+  transition: top 0.25s ease-in, left 0.25s ease-in;
+}
+
+.menu-header-logo {
+  width: 60vw;
+}
+
+
+.slide-bg {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-weight: bold;
+}
+
+.slide-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  transition: width 0.3s ease;
+  z-index: -1;
+}
+
+.light::before {
+  background-color: #000;
+}
+
+.dark::before {
+  background-color: #fff;
+}
+
+.slide-bg:hover::before {
+  width: 100%;
+}
+
+.light:hover {
+  color: #fff;
+}
+
+.dark:hover {
+  color: #000;
+}
+
+.main-container {
+  /* width: 100vw;
+  height: 100vh; */
+}
+</style>
