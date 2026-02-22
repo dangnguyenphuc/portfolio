@@ -2,7 +2,7 @@
   <Header @changeWindow="updateWindow" :menuItems="menuItems" :showNavBar="showNav" :currentWindow="currentWindow" />
   <v-window disabled v-model="currentWindow">
     <v-window-item v-for="item in menuItems" key="item.id" :value="item.id">
-      <component :is="item.component"/>
+      <component @backToGallery="updateWindow" :is="item.component"/>
     </v-window-item>
 
     <v-window-item disabled :value="menuItems.length">

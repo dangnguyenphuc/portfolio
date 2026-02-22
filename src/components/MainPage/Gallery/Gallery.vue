@@ -10,34 +10,35 @@
             <div class="list">
                 <div class="item" v-for="(item, index) in slideItems" :key="index">
                     <div class="d-flex flex-column pa-5 justify-center pa-0 align-center carousel-text">
-                            <div :class="'blood blur bg-' + item.color">
-                                <v-row class="carousel-text-1">
-                                    <v-col cols="12"
-                                        class="d-flex justify-center font-weight-black align-center">
-                                        <span class="main-item-text">
-                                            {{ item.text }}
-                                        </span>
-                                    </v-col>
-                                    <v-col cols="12">
-                                    </v-col>
-                                </v-row>
-                            </div>
+                        <div :class="'blood blur bg-' + item.color">
+                            <v-row class="carousel-text-1">
+                                <v-col cols="12"
+                                    class="d-flex justify-center font-weight-black align-center">
+                                    <span class="main-item-text">
+                                        {{ item.text }}
+                                    </span>
+                                </v-col>
+                                <v-col cols="12">
+                                </v-col>
+                            </v-row>
+                        </div>
 
-                        </div>
-                        <img :src="item.image">
-                        <div class="introduce">
-                            <div class="title">{{ item.detailText.title }}</div>
-                            <div class="topic">Aerphone</div>
-                            <div class="des">
-                                {{item.detailText.text}}
-                            </div>
-                        </div>
+                    </div>
+                    <img :src="item.image">
+                    <div class="introduce d-flex flex-column ga-4">
+                        <div class="title">{{ item.detailText.title }}</div>
+                        <div class="topic">{{ item.detailText.topic }}</div>
+                    </div>
+
+                    <div :class="'des border border-opacity-100 bg-' + item.color">
+                        {{item.detailText.text}}
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="custom-delimiters d-flex flex-column justify-center align-center">
-            <div v-for="(slide, i) in slideItems" :key="i" @click="changeSlide(i)">
+            <div v-for="(slide, i) in slideItems" :key="i" @click="changeSlide(i)" class="custom-border">
                 <v-img class="delimeter-image" :class="{ 'delimeter-active': slide.id === itemArray[1] }"
                     :src="slide.image"></v-img>
             </div>
@@ -65,6 +66,7 @@ export default defineComponent({
     },
     data() {
         return {
+            isThrottled: false as Boolean,
             intervalId: null as number | null,
             carousel: null as HTMLElement | null,
             listHTML: null as HTMLElement | null,
@@ -76,6 +78,7 @@ export default defineComponent({
                     image: Config.GALLERY_IMAGE_1,
                     detailText: {
                         title: 'VNG Gaming Scholarship',
+                        topic: 'My first scholarship ever',
                         text: 'This marks my first remarkable achievement in my entire four-year journey as a student at Ho Chi Minh University of Technology. Attaining this milestone required me to present my visionary ideas for enhancing the beloved Pikachu game while offering insightful perspectives on the current landscape of the gaming industry',
                     }
                 },
@@ -85,8 +88,9 @@ export default defineComponent({
                     text: Config.GALLERY_TITLE_2,
                     image: Config.GALLERY_IMAGE_2,
                     detailText: {
-                        title: '',
-                        text: '',
+                        title: 'Thesis Defense',
+                        topic: 'The final defense of thesis',
+                        text: 'The night before the defense, we encountered some critical errors that caused the main app to crash. At first, we tried to replace parts of it to improve things, but in the end, we just aimed to make it run properly. Our team meeting lasted until 3 a.m., and we only slept for an hour because we had to get to campus early to prepare for the presentation. My Graduation Defense Committee included so many geniuses that we jokingly called them demons because of the complexity and scope of their projects.At the end of the day, we received an overall score of 9.5. Not bad but I feel we could have done even better.',
                     }
                 },
                 {
@@ -95,8 +99,9 @@ export default defineComponent({
                     text: Config.GALLERY_TITLE_3,
                     image: Config.GALLERY_IMAGE_3,
                     detailText: {
-                        title: '',
-                        text: '',
+                        title: 'HCMUT Graduation',
+                        topic: 'OMG, I graduated as a valedicto-rian',
+                        text: 'I didn\'t even realize I was the valedictorian until a week before graduation. I had received the email, but I was too focused on work to notice, still deep in WebRTC issues at IVC. The funniest part? I went to campus, received the gold medal, and then headed straight back to work. I was just an intern and didn\'t even have annual leave yet.',
                     }
                 },
                 {
@@ -105,8 +110,9 @@ export default defineComponent({
                     text: Config.GALLERY_TITLE_4,
                     image: Config.GALLERY_IMAGE_4,
                     detailText: {
-                        title: '',
-                        text: '',
+                        title: 'UpRace day 2025',
+                        topic: 'My first half marathon',
+                        text: 'My colleague and I at Zalo decided to test our endurance. We signed up for a 5K at first, but it felt too easy, so we went for the 21K instead. I ran my ahh off just to survive. In the last kilometer, I got a cramp, and so did my colleague. We ended up limping together to the finish line. It was hands down the toughest and funniest event I participate in 2025.',
                     }
                 },
                 {
@@ -115,8 +121,9 @@ export default defineComponent({
                     text: Config.GALLERY_TITLE_5,
                     image: Config.GALLERY_IMAGE_5,
                     detailText: {
-                        title: '',
-                        text: '',
+                        title: 'Crewmates at IVC',
+                        topic: 'My first company experience',
+                        text: 'My time at IVC hasn\'t been easy, but it hasn\'t been a bad experience either. It\'s made me realize how many things I didn\'t even know existed and now I\'ve had the chance to experience them firsthand. Even though I only worked there for 10 months.',
                     }
                 },
                 {
@@ -125,8 +132,9 @@ export default defineComponent({
                     text: Config.GALLERY_TITLE_6,
                     image: Config.GALLERY_IMAGE_6,
                     detailText: {
-                        title: '',
-                        text: '',
+                        title: 'No context image',
+                        topic: 'My lame ahh costume',
+                        text: 'I just want to make sure that I\'m still a normal person and that I still have free will. After two years of working, I\'ve learned a lot, not just academic knowledge, but also social skills and life experience.',
                     }
                 }
             ],
@@ -300,11 +308,11 @@ export default defineComponent({
 }
 
 .carousel .list .item img {
-    width: 50%;
+    width: 55%;
     position: absolute;
     right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 45%;
+    transform: translateY(-45%);
     transition: right 1.5s;
 }
 
@@ -324,6 +332,21 @@ export default defineComponent({
     transition: opacity 0.5s;
 }
 
+.item .des {
+    color: rgb(var(--v-theme-primary-darken-1));
+    background-color: rgb(var(--v-theme-background));
+    font-size: small;
+    position: absolute;
+    bottom: 15%;
+    left: 105%;
+    min-width: 300px
+}
+
+.introduce .title, .topic {
+    color: rgb(var(--v-theme-primary-darken-1));
+    background-color: rgb(var(--v-theme-background));
+}
+
 .carousel .list .item .introduce .title {
     font-size: 2em;
     font-weight: 500;
@@ -335,10 +358,6 @@ export default defineComponent({
     font-weight: 500;
 }
 
-.carousel .list .item .introduce .des {
-    font-size: small;
-    color: #5559;
-}
 
 .carousel .list .item:nth-child(1) {
     transform: var(--item1-transform);
@@ -372,7 +391,7 @@ export default defineComponent({
 /* animation text in item2 */
 .carousel .list .item:nth-child(2) .introduce .title,
 .carousel .list .item:nth-child(2) .introduce .topic,
-.carousel .list .item:nth-child(2) .introduce .des {
+.carousel .list .item:nth-child(2) .des {
     opacity: 0;
     animation: showContent 0.5s 1s ease-in-out 1 forwards;
 }
@@ -394,7 +413,7 @@ export default defineComponent({
     animation-delay: 1.2s;
 }
 
-.carousel .list .item:nth-child(2) .introduce .des {
+.carousel .list .item:nth-child(2) .des {
     animation-delay: 1.4s;
 }
 
@@ -546,6 +565,18 @@ export default defineComponent({
     rotate: 90deg;
 }
 
+.custom-delimiters > .custom-border {
+  border-left: 1px solid rgb(var(--v-theme-primary-darken-1));
+  border-right: 1px solid rgb(var(--v-theme-primary-darken-1));
+  border-top: 1px solid rgb(var(--v-theme-primary-darken-1));
+  background-color: rgb(var(--v-theme-background));
+}
+
+/* Add bottom border only to last child */
+.custom-delimiters > .custom-border:nth-last-child(2) {
+  border: 1px solid rgb(var(--v-theme-primary-darken-1));
+}
+
 @media (max-width: 1280px) {
     .main-logo {
         width: 60vw;
@@ -558,6 +589,8 @@ export default defineComponent({
     .main-item-text {
         font-size: 6rem;
     }
+
+
 }
 
 @keyframes transformFromPosition1 {
@@ -589,6 +622,15 @@ export default defineComponent({
 
     .carousel .list .item:nth-child(2) .introduce {
         width: 50%;
+        top: 20%;
+        left: 5%;
+        transform: translateY(-30%);
+    }
+
+    .carousel .list .item .des {
+        bottom: 10%;
+        left: 40%;
+        min-width: 200px
     }
 
     .carousel .list .item img {
