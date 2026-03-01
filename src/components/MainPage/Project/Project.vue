@@ -1,5 +1,10 @@
 <template>
-    <Undercontruction @backToHome="$emit('backToGallery', 0)"/>
+<div class="container d-flex flex-column ga-3">
+<Undercontruction @backToHome="$emit('backToGallery', 0)"/>
+
+<canvas ref="atom-simulation" width="500" height="500"></canvas>
+</div>
+    
 </template>
 
 <script lang="ts">

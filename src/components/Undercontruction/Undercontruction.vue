@@ -11,7 +11,7 @@
             </v-btn>
         
         <div class="undercontruction-img">
-            <v-img :src="config.NOT_FOUND_IMG"></v-img>
+            <v-img :src="config.NOT_FOUND_IMG" :alt="config.NOT_FOUND_IMG_ALT"></v-img>
         </div>
         
     </div>
