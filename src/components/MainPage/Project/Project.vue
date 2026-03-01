@@ -19,12 +19,13 @@
 import { defineComponent } from 'vue'
 import * as Config from '@/config'
 import Undercontruction from '@/components/Undercontruction/Undercontruction.vue';
+import {GlRenderer, Particle, RED, BLUE, GRAY, PROTON_SCALE, ELECTRON_SCALE, NEUTON_SCALE} from './Atom/Atom.ts'
 
 export default defineComponent({
     name: 'Project',
     emits: ['backToGallery'],
     setup() {
-        const atomSimulation = ref<HTMLCanvasElement>();
+        const atomSimulation = ref<HTMLCanvasElement | null>(null);
         return {
             atomSimulation
         };
@@ -33,74 +34,23 @@ export default defineComponent({
         Undercontruction,
     },
     mounted() {
-        const gl: WebGLRenderingContext = this.atomSimulation?.getContext("webgl");
-
-        if (!gl) {
+        if (!this.atomSimulation) {
             this.glNotSupport = false;
-            return
+            return;
         }
+        const glEngine : GlRenderer = new GlRenderer(this.atomSimulation);
+        glEngine.init();
 
-        const vsSource = `
-            attribute vec2 position;
-            void main() {
-            gl_Position = vec4(position, 0.0, 5.0);
-            }
-        `;
+        const electrons : Particle[] = [];
+        const neutrons : Particle[] = [];
+        const protons : Particle[] = [];
 
-        const fsSource = `
-            void main() {
-            gl_FragColor = vec4(0.2, 0.8, 1.0, 1.0);
-            }
-        `;
+        protons.push(new Particle([0, 0], 1, RED, PROTON_SCALE))
+        electrons.push(new Particle([-0.5, 0], 1, BLUE, ELECTRON_SCALE))
 
-        // Compile shader
-        function compile(type: number, source: string) {
-            const shader: WebGLShader = gl.createShader(type);
-            gl.shaderSource(shader, source);
-            gl.compileShader(shader);
-            return shader;
-        }
-
-        const vs: WebGLShader = compile(gl.VERTEX_SHADER, vsSource);
-        const fs: WebGLShader = compile(gl.FRAGMENT_SHADER, fsSource);
-
-        // Create program
-        const program = gl.createProgram();
-        gl.attachShader(program, vs);
-        gl.attachShader(program, fs);
-        gl.linkProgram(program);
-        gl.useProgram(program);
-
-        // Triangle vertices (clip space)
-        const vertices: number[] = [];
-
-        vertices.push(0,0);
-
-        const MAX_SEGMENTS = 50;
-        const RADIUS = 1;
-
-        for (let i = 0; i <= MAX_SEGMENTS; ++i) {
-            const angle: number = Math.PI * 2 * (i/MAX_SEGMENTS);
-            const x: number = Math.cos(angle) * RADIUS;
-            const y: number = Math.sin(angle) * RADIUS;
-            vertices.push(x,y);
-        }
-
-        const vertexArray = new Float32Array(vertices);
-
-        const buffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
-        
-
-        const position = gl.getAttribLocation(program, "position");
-        gl.enableVertexAttribArray(position);
-        gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-
-        gl.clearColor(0, 0, 0, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-
-        gl.drawArrays(gl.TRIANGLE_FAN, 0, MAX_SEGMENTS + 2);
+        glEngine.clear();
+        glEngine.draw(protons);
+        glEngine.draw(electrons);
         
     },
     data() {
