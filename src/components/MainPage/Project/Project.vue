@@ -67,6 +67,9 @@ export default defineComponent({
             last = time;
             
             glEngine.clear();
+
+            glEngine.drawOrbit(electrons[0], protons[0]);
+            
             glEngine.update(electrons, dt);
             glEngine.draw(protons);
             glEngine.draw(electrons);
