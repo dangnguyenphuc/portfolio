@@ -8,6 +8,8 @@ export const PROTON_SCALE = 0.1;
 export const NEUTON_SCALE = 0.05;
 export const ELECTRON_SCALE = 0.03;
 
+export const ELECTRON_ANGULAR_SPEED = Math.PI / 2;
+
 
 export class Particle {
     constructor(
@@ -15,7 +17,16 @@ export class Particle {
         public charge: number,
         public color: number[] = BLUE,
         public scale: number = 1,
+        public angle: number = 0,
+        public orbitDistance: number = 0
     ) {}
+
+    update(dt: number) {
+        this.angle += ELECTRON_ANGULAR_SPEED * dt;
+        
+        this.pos[0] = Math.cos(this.angle) * this.orbitDistance;
+        this.pos[1] = Math.sin(this.angle) * this.orbitDistance;
+    }
 }
 
 export class GlRenderer {
@@ -40,10 +51,11 @@ export class GlRenderer {
             attribute vec2 position;
             uniform vec2 offset;
             uniform float scale;
+            uniform float perspective;
 
             void main() {
                 vec2 scaled = position * scale;
-                gl_Position = vec4(scaled + offset, 0.0, 1.0);
+                gl_Position = vec4(scaled + offset, 0.0, 2);
             }
         `;
 
@@ -71,7 +83,7 @@ export class GlRenderer {
         gl.attachShader(this.program, fragmentShader);
         gl.linkProgram(this.program);
         gl.useProgram(this.program);
-
+        
         this.positionLoc = gl.getAttribLocation(this.program, "position")!;
 
         this.offsetLoc = gl.getUniformLocation(this.program, "offset")!;
@@ -99,6 +111,12 @@ export class GlRenderer {
 
     clear() {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+    }
+
+    update(electrons: Particle[], time: number) {
+        for (const e of electrons) {
+            e.update(time)
+        }
     }
 
     draw(particles: Particle[]) {
