@@ -25,7 +25,7 @@
 import { defineComponent } from 'vue'
 import * as Config from '@/config'
 import Undercontruction from '@/components/Undercontruction/Undercontruction.vue';
-import {GlRenderer, Particle, RED, BLUE, GRAY, PROTON_SCALE, ELECTRON_SCALE, NEUTON_SCALE} from './Atom/Atom.ts'
+import {GlRenderer, Particle, RED, BLUE, GRAY, PROTON_SCALE, ELECTRON_SCALE, NEUTON_SCALE} from './Atom/Atom'
 
 export default defineComponent({
     name: 'Project',

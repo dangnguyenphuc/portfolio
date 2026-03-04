@@ -26,5 +26,5 @@ export const GALLERY_IMAGE_6 = '/gallery/img6.png'
 export const GALLERY_TITLE_6 = 'No context image'
 //=======================================================================================
 
-export const NOT_FOUND_IMG = 'https://scontent.fsgn22-1.fna.fbcdn.net/v/t39.30808-6/639973640_122104658133253139_874672223512244893_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=13d280&_nc_ohc=5UcjfwlO3DYQ7kNvwGayeke&_nc_oc=AdmKxvEQx4tnzbCPFppEEuHU_YZSm9OxVSvcIgIFJ5VWKe9UiDgKmwO41t1iN14K_RPclIjous9iUykuGLvz_Gn4&_nc_zt=23&_nc_ht=scontent.fsgn22-1.fna&_nc_gid=DNPJ4ueuW9R9Xja_8E5Faw&_nc_ss=8&oh=00_AfuOPEPEEpHavG8PO660c7O9bEbKBTRFGYX_eF8lJKP-Yw&oe=69A9DB05'
+export const NOT_FOUND_IMG = 'https://scontent.fsgn19-1.fna.fbcdn.net/v/t39.30808-6/639973640_122104658133253139_874672223512244893_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=13d280&_nc_ohc=hSFFPy7BfUEQ7kNvwERwJ0I&_nc_oc=AdmyHuvuC33n-uX8CTSaxpunpapXukz1xfwAVKaVHRWsf5a0QZAlRZoyjWxr8UI8KA4&_nc_zt=23&_nc_ht=scontent.fsgn19-1.fna&_nc_gid=uHnyeWLFiPtFMqx6Mnq6rQ&_nc_ss=8&oh=00_Afxw0sPBZ37JMSYb8WjncA621_7JSYXl5z-xrsbg0_ndZw&oe=69AE4005'
 export const NOT_FOUND_IMG_ALT = '/goofy-ahh/underconstruction.png'
