@@ -8,7 +8,7 @@
 
             </div>
             <span ><p class="">fps:{{ fps }}</p></span>
-            <canvas ref="atomSimulation" width="500" height="500"></canvas>
+            <canvas ref="atomSimulation" width="1000" height="1000"></canvas>
         </div>
     </div>
 
@@ -25,7 +25,7 @@
 import { defineComponent } from 'vue'
 import * as Config from '@/config'
 import Undercontruction from '@/components/Undercontruction/Undercontruction.vue';
-import {GlRenderer, Particle, RED, BLUE, GRAY, PROTON_SCALE, ELECTRON_SCALE, NEUTON_SCALE} from './Atom/Atom'
+import {GlRenderer, Particle, RED, BLUE, GRAY, PROTON_SCALE, ELECTRON_SCALE, NEUTRON_SCALE, Electron, neutrons, protons, electrons, AtomManager} from './Atom/Atom'
 
 export default defineComponent({
     name: 'Project',
@@ -44,20 +44,15 @@ export default defineComponent({
             this.glNotSupport = false;
             return;
         }
+
+        const atomManager: AtomManager = new AtomManager();
+        atomManager.makeAtom(0, 0);
+
         const glEngine : GlRenderer = new GlRenderer(this.atomSimulation);
         glEngine.init();
-
-        const electrons : Particle[] = [];
-        const neutrons : Particle[] = [];
-        const protons : Particle[] = [];
-
-        protons.push(new Particle([0, 0], 1, RED, PROTON_SCALE))
-        electrons.push(new Particle([1, 0], 1, BLUE, ELECTRON_SCALE, 0, 1))
+        
 
         glEngine.clear();
-        glEngine.draw(protons);
-        glEngine.draw(neutrons);
-        glEngine.draw(electrons);
 
         let last = performance.now();
 
@@ -68,11 +63,20 @@ export default defineComponent({
             
             glEngine.clear();
 
-            glEngine.drawOrbit(electrons[0], protons[0]);
+            for (const proton of protons) {
+                glEngine.drawParticle(proton);
+            }
+
+            for (const electron of electrons) {
+                electron.update(dt);
+                glEngine.drawElectron(electron);
+            }
+
+            for (const neutron of neutrons) {
+                glEngine.drawParticle(neutron);
+            }
+
             
-            glEngine.update(electrons, dt);
-            glEngine.draw(protons);
-            glEngine.draw(electrons);
 
             requestAnimationFrame(animate);
         }

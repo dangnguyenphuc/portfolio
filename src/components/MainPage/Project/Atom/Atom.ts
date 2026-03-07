@@ -1,4 +1,6 @@
 const MAX_SEGMENTS = 30;
+const MAX_ELECTRON_PER_ATOM = 2;
+const MAX_NEUTRON_PER_ATOM = 1;
 
 export const BLUE           =    [0,     1,      1];
 export const RED            =    [1,     0,      0];
@@ -6,29 +8,57 @@ export const GRAY           =    [0.5,   0.5,    0.5]
 export const ORBIT_COLOR    =    [1,    1,    1]
 
 export const PROTON_SCALE = 0.1;
-export const NEUTON_SCALE = 0.05;
+export const NEUTRON_SCALE = 0.05;
 export const ELECTRON_SCALE = 0.03;
 
 export const ELECTRON_ANGULAR_SPEED = Math.PI / 2;
 
+export const electrons : Electron[] = [];
+export const neutrons : Particle[] = [];
+export const protons : Particle[] = [];
+
+const randPos = [
+    [0, 1],
+    [1, 0],
+    [-1, 0],
+    [0, -1]
+]
 
 export class Particle {
     constructor(
         public pos: number[],
         public charge: number,
-        public color: number[] = BLUE,
+        public color: number[] = RED,
         public scale: number = 1,
-        public angle: number = 0,
-        public orbitDistance: number = 0
+        public angle: number = 0
     ) {}
+};
 
-    update(dt: number) {
-        this.angle += ELECTRON_ANGULAR_SPEED * dt;
-        
-        this.pos[0] = Math.cos(this.angle) * this.orbitDistance;
-        this.pos[1] = Math.sin(this.angle) * this.orbitDistance;
+
+
+export class Electron extends Particle {
+    
+    public orbitDistance: number;
+
+    constructor(
+        public pos: number[],
+        public protonId: number
+    ) {
+        super(pos, -1, BLUE, ELECTRON_SCALE, 0);
+        const proton: Particle = protons[this.protonId];
+        let dx: number = Math.abs(pos[0] - proton.pos[0]);
+        let dy: number = Math.abs(pos[1] - proton.pos[1]);
+        this.orbitDistance = Math.sqrt(dx*dx + dy*dy);
+        this.angle = Math.atan2(dy, dx);
     }
-}
+
+    update(dt: number): void {
+        this.angle += ELECTRON_ANGULAR_SPEED * dt;
+        const proton: Particle = protons[this.protonId];
+        this.pos[0] = proton.pos[0] + Math.cos(this.angle) * this.orbitDistance;
+        this.pos[1] = proton.pos[1] + Math.sin(this.angle) * this.orbitDistance;
+    }
+};
 
 export class GlRenderer {
     private gl: WebGLRenderingContext;
@@ -57,39 +87,8 @@ export class GlRenderer {
         this.scaleLoc  = gl.getUniformLocation(this.program, "scale")!;
         this.colorLoc  = gl.getUniformLocation(this.program, "color")!;
 
-
-        const vertices: number[] = [0,0];
-        const orbitVertices: number[] = [];
-
-        for (let i = 0; i <= MAX_SEGMENTS; i+=1) {
-            const angle: number = Math.PI * 2 * (i/MAX_SEGMENTS);
-            let x = Math.cos(angle);
-            let y = Math.sin(angle);
-            vertices.push(x, y);
-            if (i == MAX_SEGMENTS) break;
-            orbitVertices.push(x, y)
-        }
-
-        this.vertexCount = MAX_SEGMENTS + 2;
-        this.buffer = gl.createBuffer()!;
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-        gl.enableVertexAttribArray(this.positionLoc);
-        gl.vertexAttribPointer(this.positionLoc, 2, gl.FLOAT, false, 0, 0);
-
-        for (let i = 0; i < MAX_SEGMENTS; i++) {
-            const angle = (i / MAX_SEGMENTS) * Math.PI * 2;
-            orbitVertices.push(Math.cos(angle), Math.sin(angle));
-        }
-
-        this.orbitVertexCount = MAX_SEGMENTS;
-
-        this.orbitBuffer = gl.createBuffer()!;
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.orbitBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(orbitVertices), gl.STATIC_DRAW);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.orbitBuffer);
-        gl.vertexAttribPointer(this.positionLoc, 2, gl.FLOAT, false, 0, 0);
-
+        this.registerCircle();
+        this.registerOrbit();
         gl.clearColor(0, 0, 0, 1);
     }
 
@@ -102,7 +101,7 @@ export class GlRenderer {
 
             void main() {
                 vec2 scaled = position * scale;
-                gl_Position = vec4(scaled + offset, 0.0, 2);
+                gl_Position = vec4(scaled + offset, 0.0, 8.0);
             }
         `;
 
@@ -132,37 +131,91 @@ export class GlRenderer {
         gl.useProgram(this.program);
     }
 
+    registerCircle() {
+        const gl = this.gl;
+        const vertices: number[] = [0,0];
+        for (let i = 0; i <= MAX_SEGMENTS; i+=1) {
+            const angle: number = Math.PI * 2 * (i/MAX_SEGMENTS);
+            let x = Math.cos(angle);
+            let y = Math.sin(angle);
+            vertices.push(x, y);
+        }
+
+        this.vertexCount = MAX_SEGMENTS + 2;
+        this.buffer = gl.createBuffer()!;
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(this.positionLoc);
+        gl.vertexAttribPointer(this.positionLoc, 2, gl.FLOAT, false, 0, 0);
+    }
+
+    registerOrbit() {
+        const gl = this.gl;
+        const orbitVertices: number[] = [];
+        for (let i = 0; i < MAX_SEGMENTS; i++) {
+            const angle = (i / MAX_SEGMENTS) * Math.PI * 2;
+            orbitVertices.push(Math.cos(angle), Math.sin(angle));
+        }
+
+        this.orbitVertexCount = MAX_SEGMENTS;
+
+        this.orbitBuffer = gl.createBuffer()!;
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.orbitBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(orbitVertices), gl.STATIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.orbitBuffer);
+        gl.vertexAttribPointer(this.positionLoc, 2, gl.FLOAT, false, 0, 0);
+    }
+
     clear() {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
     }
 
-    update(electrons: Particle[], time: number) {
+    update(electrons: Electron[], time: number) {
         for (const e of electrons) {
             e.update(time)
         }
     }
 
-    drawOrbit(electron: Particle, proton: Particle) {
+    drawOrbit(electron: Electron) {
         const gl = this.gl
         
         gl.bindBuffer(gl.ARRAY_BUFFER, this.orbitBuffer);
         gl.vertexAttribPointer(this.positionLoc, 2, gl.FLOAT, false, 0, 0);
-
+        const proton: Particle = protons[electron.protonId];
         gl.uniform2f(this.offsetLoc, proton.pos[0], proton.pos[1]);
-        gl.uniform1f(this.scaleLoc, 1);  // scale to orbit radius
+        gl.uniform1f(this.scaleLoc, electron.orbitDistance);
         gl.uniform3f(this.colorLoc, ORBIT_COLOR[0], ORBIT_COLOR[1], ORBIT_COLOR[2]);
         gl.drawArrays(gl.LINE_LOOP, 0, this.orbitVertexCount);
     }
 
-    draw(particles: Particle[]) {
+    drawParticle(particle: Particle) {
         const gl = this.gl;
-    
-        for (const p of particles) {
-            gl.uniform2f(this.offsetLoc, p.pos[0], p.pos[1]);
-            gl.uniform1f(this.scaleLoc, p.scale);
-            gl.uniform3f(this.colorLoc, p.color[0], p.color[1], p.color[2]);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+        gl.vertexAttribPointer(this.positionLoc, 2, gl.FLOAT, false, 0, 0);
+        gl.uniform2f(this.offsetLoc, particle.pos[0], particle.pos[1]);
+        gl.uniform1f(this.scaleLoc, particle.scale);
+        gl.uniform3f(this.colorLoc, particle.color[0], particle.color[1], particle.color[2]);
 
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.vertexCount);
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, this.vertexCount);
+    }
+
+    drawElectron(electron: Electron) {
+        this.drawOrbit(electron);
+        this.drawParticle(electron);
+    }
+
+}
+
+export class AtomManager {
+    public counter: number = 0;
+    constructor() {}
+
+    makeAtom(x: number, y: number) {
+        protons.push(new Particle([x, y], 1, RED, PROTON_SCALE));
+        this.counter += 1;
+
+        for (let i = 0; i < MAX_ELECTRON_PER_ATOM; i+=1) {
+            electrons.push(new Electron(randPos[Math.floor(Math.random() * 4)], this.counter - 1));
         }
     }
 }
