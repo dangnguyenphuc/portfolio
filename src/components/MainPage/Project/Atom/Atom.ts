@@ -32,14 +32,18 @@ const randPos = [
 
 export class Wave {
     public phase = 0;
+    public amplitude = 0.5;
     public xA = 1;
+    public firstTouch = false;
+    public freq = WAVE_FREQ;
+
     constructor(
         public pos: number[]
     ) {}
 
     update(dt: number): void {
         this.phase += dt * WAVE_FREQ * this.xA;
-        this.pos[0] += dt * this.xA * WAVE_FREQ/2;
+        this.pos[0] += dt * this.xA * WAVE_FREQ/4;
     }
 
     reflect(w: number, height: number) {
@@ -50,6 +54,7 @@ export class Wave {
 };
 
 export class Particle {
+    public orbitDistance: number = -1;
     constructor(
         public pos: number[],
         public charge: number,
@@ -60,8 +65,7 @@ export class Particle {
 };
 
 export class Electron extends Particle {
-    
-    public orbitDistance: number;
+    public n: number = 1;
 
     constructor(
         public pos: number[],
@@ -76,10 +80,11 @@ export class Electron extends Particle {
     }
 
     update(dt: number): void {
+        let radius: number = this.orbitDistance * this.n;
         this.angle += ELECTRON_ANGULAR_SPEED * dt;
         const proton: Particle = protons[this.protonId];
-        this.pos[0] = proton.pos[0] + Math.cos(this.angle) * this.orbitDistance;
-        this.pos[1] = proton.pos[1] + Math.sin(this.angle) * this.orbitDistance;
+        this.pos[0] = proton.pos[0] + Math.cos(this.angle) * radius;
+        this.pos[1] = proton.pos[1] + Math.sin(this.angle) * radius;
     }
 };
 
@@ -288,8 +293,8 @@ export class GlRenderer {
         gl.enableVertexAttribArray(this.wPositionLoc);
         gl.vertexAttribPointer(this.wPositionLoc, 2, gl.FLOAT, false, 0, 0);
         gl.uniform1f(this.wPhaseLoc, wave.phase);
-        gl.uniform1f(this.wFreqLoc, WAVE_FREQ);
-        gl.uniform1f(this.wAmpLoc, 0.5);
+        gl.uniform1f(this.wFreqLoc, wave.freq);
+        gl.uniform1f(this.wAmpLoc, wave.amplitude);
         gl.uniform2f(this.wOffsetLoc, wave.pos[0], wave.pos[1]);
         gl.uniform3f(this.wColorLoc, 1, 1, 1);
         gl.drawArrays(gl.LINE_STRIP, 0, this.waveVertexCount);
@@ -323,9 +328,33 @@ export class AtomManager {
     makeAtom(x: number, y: number) {
         protons.push(new Particle([x, y], 1, RED, PROTON_SCALE));
         this.counter += 1;
-
+        
         for (let i = 0; i < MAX_ELECTRON_PER_ATOM; i+=1) {
-            electrons.push(new Electron(randPos[Math.floor(Math.random() * 4)], this.counter - 1));
+            const electron = new Electron(randPos[Math.floor(Math.random() * 4)], this.counter - 1)
+            electrons.push(electron);
+            protons[this.counter - 1].orbitDistance = electron.orbitDistance;
         }
     }
+}
+
+export function collision(atom: Particle, wave: Wave) {
+
+    const left = wave.pos[0];
+    const right = wave.pos[0] + wave.xA*WAVE_LENGTH;
+
+    const top = wave.pos[1];
+    const bottom = wave.pos[1] - wave.xA*wave.amplitude * 2;
+
+    const minX = Math.min(left, right);
+    const maxX = Math.max(left, right);
+    const minY = Math.min(bottom, top);
+    const maxY = Math.max(bottom, top);
+
+    const closestX = Math.max(minX, Math.min(atom.pos[0], maxX));
+    const closestY = Math.max(minY, Math.min(atom.pos[1], maxY));
+
+    const dx = atom.pos[0] - closestX;
+    const dy = atom.pos[1] - closestY;
+
+    return dx * dx + dy * dy <= atom.orbitDistance * atom.orbitDistance;
 }
