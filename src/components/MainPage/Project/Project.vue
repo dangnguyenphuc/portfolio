@@ -25,7 +25,7 @@
 import { defineComponent } from 'vue'
 import * as Config from '@/config'
 import Undercontruction from '@/components/Undercontruction/Undercontruction.vue';
-import {GlRenderer, Particle, RED, BLUE, GRAY, PROTON_SCALE, ELECTRON_SCALE, NEUTRON_SCALE, Electron, neutrons, protons, electrons, AtomManager} from './Atom/Atom'
+import {GlRenderer, neutrons, protons, electrons, AtomManager, Wave} from './Atom/Atom'
 
 export default defineComponent({
     name: 'Project',
@@ -47,7 +47,7 @@ export default defineComponent({
 
         const atomManager: AtomManager = new AtomManager();
         atomManager.makeAtom(0, 0);
-
+        const wave: Wave = new Wave([5,2]);
         const glEngine : GlRenderer = new GlRenderer(this.atomSimulation);
         glEngine.init();
         
@@ -62,7 +62,9 @@ export default defineComponent({
             last = time;
             
             glEngine.clear();
-
+            wave.update(dt);
+            wave.reflect(glEngine.width, glEngine.height);
+            glEngine.drawWave(wave);
             for (const proton of protons) {
                 glEngine.drawParticle(proton);
             }

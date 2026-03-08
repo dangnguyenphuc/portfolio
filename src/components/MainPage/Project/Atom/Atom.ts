@@ -1,15 +1,21 @@
-const MAX_SEGMENTS = 30;
-const MAX_ELECTRON_PER_ATOM = 2;
+const MAX_SEGMENTS = 40;
+const MAX_WAVE_SEGMENTS = 100;
+const MAX_ELECTRON_PER_ATOM = 1;
 const MAX_NEUTRON_PER_ATOM = 1;
+const WAVE_FREQ = 16;
+const WAVE_LENGTH = 2;
+const WAVE_AMPLITUDE = 1;
 
-export const BLUE           =    [0,     1,      1];
-export const RED            =    [1,     0,      0];
-export const GRAY           =    [0.5,   0.5,    0.5]
-export const ORBIT_COLOR    =    [1,    1,    1]
+const MAX_COORDINATE = 9
 
-export const PROTON_SCALE = 0.1;
-export const NEUTRON_SCALE = 0.05;
-export const ELECTRON_SCALE = 0.03;
+const BLUE           =    [0,     1,      1];
+const RED            =    [1,     0,      0];
+const GRAY           =    [0.5,   0.5,    0.5]
+const ORBIT_COLOR    =    [1,    1,    1]
+
+const PROTON_SCALE = 0.2;
+const NEUTRON_SCALE = 0.1;
+const ELECTRON_SCALE = 0.08;
 
 export const ELECTRON_ANGULAR_SPEED = Math.PI / 2;
 
@@ -24,6 +30,25 @@ const randPos = [
     [0, -1]
 ]
 
+export class Wave {
+    public phase = 0;
+    public xA = 1;
+    constructor(
+        public pos: number[]
+    ) {}
+
+    update(dt: number): void {
+        this.phase += dt * WAVE_FREQ * this.xA;
+        this.pos[0] += dt * this.xA * WAVE_FREQ/2;
+    }
+
+    reflect(w: number, height: number) {
+        if (this.pos[0] + WAVE_LENGTH >= MAX_COORDINATE || this.pos[0] - WAVE_LENGTH <= -MAX_COORDINATE) {
+            this.xA *= -1;
+        }
+    }
+};
+
 export class Particle {
     constructor(
         public pos: number[],
@@ -33,8 +58,6 @@ export class Particle {
         public angle: number = 0
     ) {}
 };
-
-
 
 export class Electron extends Particle {
     
@@ -46,8 +69,8 @@ export class Electron extends Particle {
     ) {
         super(pos, -1, BLUE, ELECTRON_SCALE, 0);
         const proton: Particle = protons[this.protonId];
-        let dx: number = Math.abs(pos[0] - proton.pos[0]);
-        let dy: number = Math.abs(pos[1] - proton.pos[1]);
+        let dx = pos[0] - proton.pos[0];
+        let dy = pos[1] - proton.pos[1];
         this.orbitDistance = Math.sqrt(dx*dx + dy*dy);
         this.angle = Math.atan2(dy, dx);
     }
@@ -61,40 +84,68 @@ export class Electron extends Particle {
 };
 
 export class GlRenderer {
+    public width: number;
+    public height: number;
     private gl: WebGLRenderingContext;
-    private program!: WebGLProgram;
+    private pProgram!: WebGLProgram;
+    private wProgram!: WebGLProgram;
+
     private buffer!: WebGLBuffer;
     private vertexCount!: number;
 
     private orbitBuffer!: WebGLBuffer;
     private orbitVertexCount!: number;
 
+    private waveBuffer!: WebGLBuffer;
+    private waveVertexCount!: number;
+
     private positionLoc!: number;
     private offsetLoc!: WebGLUniformLocation;
     private scaleLoc!: WebGLUniformLocation;
     private colorLoc!: WebGLUniformLocation;
 
+    private wPositionLoc!: number;
+    private wOffsetLoc!: WebGLUniformLocation;
+    private wAmpLoc!: WebGLUniformLocation;
+    private wPhaseLoc!: WebGLUniformLocation;
+    private wFreqLoc!: WebGLUniformLocation;
+    private wColorLoc!: WebGLUniformLocation;
+
     constructor(private canvas: HTMLCanvasElement) {
+        this.width = canvas.width;
+        this.height = canvas.height;
         this.gl = canvas.getContext("webgl")!;
+        this.gl.viewport(0, 0, canvas.width, canvas.height);
     }
 
     init() {
         const gl = this.gl;
         this.initGlProgram();
 
-        this.positionLoc = gl.getAttribLocation(this.program, "position")!;
-        this.offsetLoc = gl.getUniformLocation(this.program, "offset")!;
-        this.scaleLoc  = gl.getUniformLocation(this.program, "scale")!;
-        this.colorLoc  = gl.getUniformLocation(this.program, "color")!;
+        // particle program
+        this.positionLoc = gl.getAttribLocation(this.pProgram, "position")!;
+        this.offsetLoc = gl.getUniformLocation(this.pProgram, "offset")!;
+        this.scaleLoc  = gl.getUniformLocation(this.pProgram, "scale")!;
+        this.colorLoc  = gl.getUniformLocation(this.pProgram, "color")!;
 
         this.registerCircle();
         this.registerOrbit();
+
+        // wave program
+        this.wPositionLoc = gl.getAttribLocation(this.wProgram, "position")!;
+        this.wPhaseLoc    = gl.getUniformLocation(this.wProgram, "phase")!;
+        this.wAmpLoc      = gl.getUniformLocation(this.wProgram, "amplitude")!;
+        this.wFreqLoc     = gl.getUniformLocation(this.wProgram, "freq")!;
+        this.wOffsetLoc   = gl.getUniformLocation(this.wProgram, "offset")!;
+        this.wColorLoc    = gl.getUniformLocation(this.wProgram, "color")!;
+        this.registerWave();
+
         gl.clearColor(0, 0, 0, 1);
     }
 
     initGlProgram() {
         const gl = this.gl;
-        const vertexShaderSrc: string = `
+        const pVertexShaderSrc: string = `
             attribute vec2 position;
             uniform vec2 offset;
             uniform float scale;
@@ -102,6 +153,22 @@ export class GlRenderer {
             void main() {
                 vec2 scaled = position * scale;
                 gl_Position = vec4(scaled + offset, 0.0, 8.0);
+            }
+        `;
+
+        const wVertexShaderSrc: string = `
+            attribute vec2 position;
+            uniform float phase;
+            uniform float freq;
+            uniform float amplitude;
+            uniform vec2 offset;
+
+            void main() {
+
+                float x = position.x;
+                float y = amplitude * sin(x * freq + phase);
+
+                gl_Position = vec4(x + offset.x, y + offset.y, 0.0, 8.0);
             }
         `;
 
@@ -113,22 +180,33 @@ export class GlRenderer {
                 gl_FragColor = vec4(color, 1.0);
             }
         `;
+
+        this.pProgram = this.createProgram(pVertexShaderSrc, fragmentShaderSrc);
+        this.wProgram = this.createProgram(wVertexShaderSrc, fragmentShaderSrc);
         
+    }
+
+    createProgram(vertexSrc: string, fragmentSrc: string): WebGLProgram {
+        const gl = this.gl;
+
         const compile = (type: number, source: string) => {
             const shader = gl.createShader(type)!;
             gl.shaderSource(shader, source);
             gl.compileShader(shader);
             return shader;
-        }
-        
-        const vertexShader = compile(gl.VERTEX_SHADER, vertexShaderSrc);
-        const fragmentShader = compile(gl.FRAGMENT_SHADER, fragmentShaderSrc);
+        };
 
-        this.program = gl.createProgram()!;
-        gl.attachShader(this.program, vertexShader);
-        gl.attachShader(this.program, fragmentShader);
-        gl.linkProgram(this.program);
-        gl.useProgram(this.program);
+        const vertexShader = compile(gl.VERTEX_SHADER, vertexSrc);
+        const fragmentShader = compile(gl.FRAGMENT_SHADER, fragmentSrc);
+
+        const program = gl.createProgram()!;
+
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+
+        gl.linkProgram(program);
+
+        return program;
     }
 
     registerCircle() {
@@ -145,8 +223,6 @@ export class GlRenderer {
         this.buffer = gl.createBuffer()!;
         gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-        gl.enableVertexAttribArray(this.positionLoc);
-        gl.vertexAttribPointer(this.positionLoc, 2, gl.FLOAT, false, 0, 0);
     }
 
     registerOrbit() {
@@ -163,7 +239,23 @@ export class GlRenderer {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.orbitBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(orbitVertices), gl.STATIC_DRAW);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.orbitBuffer);
-        gl.vertexAttribPointer(this.positionLoc, 2, gl.FLOAT, false, 0, 0);
+    }
+    
+    registerWave() {
+        const gl = this.gl;
+        const waveVertices: number[] = [];
+        for (let i = 0; i <= MAX_WAVE_SEGMENTS; i++) {
+            // sine(wt)
+            let x: number = (i/MAX_WAVE_SEGMENTS) * WAVE_LENGTH - WAVE_LENGTH/2;
+            waveVertices.push(x, 0);
+        }
+
+        this.waveVertexCount = MAX_WAVE_SEGMENTS + 1;
+
+        this.waveBuffer = gl.createBuffer()!;
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.waveBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(waveVertices), gl.STATIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.waveBuffer);
     }
 
     clear() {
@@ -180,6 +272,7 @@ export class GlRenderer {
         const gl = this.gl
         
         gl.bindBuffer(gl.ARRAY_BUFFER, this.orbitBuffer);
+        gl.enableVertexAttribArray(this.positionLoc);
         gl.vertexAttribPointer(this.positionLoc, 2, gl.FLOAT, false, 0, 0);
         const proton: Particle = protons[electron.protonId];
         gl.uniform2f(this.offsetLoc, proton.pos[0], proton.pos[1]);
@@ -188,9 +281,25 @@ export class GlRenderer {
         gl.drawArrays(gl.LINE_LOOP, 0, this.orbitVertexCount);
     }
 
+    drawWave(wave: Wave) {
+        const gl = this.gl;
+        gl.useProgram(this.wProgram);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.waveBuffer);
+        gl.enableVertexAttribArray(this.wPositionLoc);
+        gl.vertexAttribPointer(this.wPositionLoc, 2, gl.FLOAT, false, 0, 0);
+        gl.uniform1f(this.wPhaseLoc, wave.phase);
+        gl.uniform1f(this.wFreqLoc, WAVE_FREQ);
+        gl.uniform1f(this.wAmpLoc, 0.5);
+        gl.uniform2f(this.wOffsetLoc, wave.pos[0], wave.pos[1]);
+        gl.uniform3f(this.wColorLoc, 1, 1, 1);
+        gl.drawArrays(gl.LINE_STRIP, 0, this.waveVertexCount);
+    }
+
     drawParticle(particle: Particle) {
         const gl = this.gl;
+        gl.useProgram(this.pProgram);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+        gl.enableVertexAttribArray(this.positionLoc);
         gl.vertexAttribPointer(this.positionLoc, 2, gl.FLOAT, false, 0, 0);
         gl.uniform2f(this.offsetLoc, particle.pos[0], particle.pos[1]);
         gl.uniform1f(this.scaleLoc, particle.scale);
@@ -200,6 +309,7 @@ export class GlRenderer {
     }
 
     drawElectron(electron: Electron) {
+        this.gl.useProgram(this.pProgram);
         this.drawOrbit(electron);
         this.drawParticle(electron);
     }
